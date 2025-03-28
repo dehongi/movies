@@ -1,0 +1,207 @@
+/* Movies App Specific Styles */
+
+/* Movie/Series Card */
+.media-card {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.media-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.media-card .card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+/* Media Detail Page */
+.media-poster {
+    max-height: 450px;
+    object-fit: contain;
+}
+
+.media-banner {
+    height: 350px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.media-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.media-banner-content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 2rem;
+}
+
+/* Rating Stars */
+.rating-stars {
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+.rating-stars.clickable {
+    cursor: pointer;
+}
+
+/* Watchlist Button */
+.watchlist-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.watchlist-btn.active {
+    color: #dc3545;
+}
+
+/* Review Section */
+.review-item {
+    border-left: 3px solid #0d6efd;
+    padding-left: 15px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Episodes List */
+.episode-card {
+    transition: all 0.3s ease;
+}
+
+.episode-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.episode-number {
+    background-color: #0d6efd;
+    color: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* Filter Sidebar */
+.filter-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+/* Genre Badges */
+.genre-badge {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.genre-badge:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+/* Media Forms */
+.media-form label {
+    font-weight: 500;
+}
+
+.media-form .required::after {
+    content: '*';
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .media-card .card-img-top {
+        height: 200px;
+    }
+
+    .media-banner {
+        height: 250px;
+    }
+
+    .media-poster {
+        max-height: 300px;
+    }
+}
+
+/* Video Player */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.video-container iframe,
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 0.25rem solid rgba(13, 110, 253, 0.25);
+    border-right-color: #0d6efd;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.pagination .page-link {
+    color: #0d6efd;
+}
+
+.pagination .page-link:hover {
+    color: #0a58ca;
+}

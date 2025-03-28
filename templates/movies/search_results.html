@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Search Results for "{{ query }}" | MovieHub
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'movies/css/movies.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <!-- Search Header -->
+  <div class="search-header py-5" style="background-color: #051e34;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h1 class="display-4 text-white fw-bold mb-4 text-center">Search Results</h1>
+
+          <form action="{% url 'movies:search' %}" method="get" class="search-form">
+            <div class="input-group input-group-lg">
+              <input type="text" class="form-control" placeholder="Search movies, series, genres..." name="q" value="{{ query }}" aria-label="Search" />
+              <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <div class="mt-3 text-center">
+            <div class="btn-group" role="group" aria-label="Search filters">
+              <a href="?q={{ query }}&type=all"
+                class="btn {% if selected_type == 'all' %}
+                  btn-light
+                {% else %}
+                  btn-outline-light
+                {% endif %}">
+                All ({{ total_count }})
+              </a>
+              <a href="?q={{ query }}&type=movie"
+                class="btn {% if selected_type == 'movie' %}
+                  btn-light
+                {% else %}
+                  btn-outline-light
+                {% endif %}">
+                Movies ({{ movie_count }})
+              </a>
+              <a href="?q={{ query }}&type=series"
+                class="btn {% if selected_type == 'series' %}
+                  btn-light
+                {% else %}
+                  btn-outline-light
+                {% endif %}">
+                Series ({{ series_count }})
+              </a>
+              <a href="?q={{ query }}&type=genre"
+                class="btn {% if selected_type == 'genre' %}
+                  btn-light
+                {% else %}
+                  btn-outline-light
+                {% endif %}">
+                Genres ({{ genre_count }})
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      {% if results %}
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="mb-0">Found {{ page_obj.paginator.count }} results for "{{ query }}"</p>
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">Sort By: {{ current_sort_display }}</button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                  <li>
+                    <a class="dropdown-item {% if current_sort == 'relevance' %}active{% endif %}" href="?q={{ query }}&type={{ selected_type }}&sort=relevance">Relevance</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_sort == 'newest' %}active{% endif %}" href="?q={{ query }}&type={{ selected_type }}&sort=newest">Newest First</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_sort == 'title_asc' %}active{% endif %}" href="?q={{ query }}&type={{ selected_type }}&sort=title_asc">Title (A-Z)</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_sort == 'popular' %}active{% endif %}" href="?q={{ query }}&type={{ selected_type }}&sort=popular">Most Popular</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_sort == 'rating' %}active{% endif %}" href="?q={{ query }}&type={{ selected_type }}&sort=rating">Highest Rated</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if selected_type == 'genre' %}
+          <!-- Genre Results -->
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for genre in results %}
+              <div class="col">
+                <div class="card h-100 border-0 shadow-sm genre-card">
+                  <div class="card-body text-center p-4">
+                    <h3 class="card-title h4 mb-3">{{ genre.name }}</h3>
+                    <p class="text-muted mb-4">{{ genre.media_count }} titles</p>
+                    <a href="{% url 'movies:genre_detail' slug=genre.slug %}" class="btn btn-primary">Browse Genre</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <!-- Media Results -->
+          <div class="row">
+            {% for media in results %}
+              <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm media-card">
+                  <div class="media-card-img-container">
+                    {% if media.poster %}
+                      <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}" />
+                    {% else %}
+                      <img src="https://via.placeholder.com/300x450?text=No+Poster" class="card-img-top" alt="No Poster" />
+                    {% endif %}
+                    <div class="media-card-overlay">
+                      <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-primary btn-sm"><i class="bi bi-info-circle me-1"></i> Details</a>
+                      {% if user.is_authenticated %}
+                        <button class="btn btn-outline-light btn-sm ms-2 watchlist-btn" data-media-id="{{ media.id }}">
+                          <i class="bi {% if media.id in watchlist_ids %}
+                              bi-bookmark-check-fill
+                            {% else %}
+                              bi-bookmark-plus
+                            {% endif %}">
+
+                          </i>
+                        </button>
+                      {% endif %}
+                    </div>
+                    <span class="media-type-badge {% if media.media_type.name == 'Movie' %}
+                        movie
+                      {% else %}
+                        series
+                      {% endif %}">
+                      {{ media.media_type.name }}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title mb-1"><a href="{% url 'movies:media_detail' slug=media.slug %}" class="text-decoration-none text-dark">{{ media.title }}</a></h5>
+                    <p class="card-text text-muted small mb-2">{{ media.release_year }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        {% if media.avg_rating > 0 %}
+                          <div class="me-2">
+                            <span class="badge bg-primary">{{ media.avg_rating|floatformat:1 }}</span>
+                          </div>
+                          <div class="rating-stars small">
+                            {% for i in '12345'|make_list %}
+                              {% if forloop.counter <= media.avg_rating|floordiv:2 %}
+                                <i class="bi bi-star-fill"></i>
+                              {% elif forloop.counter <= media.avg_rating|floordiv:2|add:'0.5' %}
+                                <i class="bi bi-star-half"></i>
+                              {% else %}
+                                <i class="bi bi-star"></i>
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <div class="text-muted small">No ratings</div>
+                        {% endif %}
+                      </div>
+                      <small class="text-muted">{{ media.views_count }} views</small>
+                    </div>
+
+                    <div class="mt-2">
+                      {% for genre in media.genres.all|slice:':3' %}
+                        <a href="{% url 'movies:genre_detail' slug=genre.slug %}" class="badge bg-secondary text-decoration-none me-1">{{ genre.name }}</a>
+                      {% endfor %}
+                      {% if media.genres.count > 3 %}
+                        <span class="badge bg-light text-dark">+{{ media.genres.count|add:'-3' }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+          <nav aria-label="Search results pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?q={{ query }}&type={{ selected_type }}&sort={{ current_sort }}&page=1" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?q={{ query }}&type={{ selected_type }}&sort={{ current_sort }}&page={{ page_obj.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+              {% endif %}
+
+              {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active">
+                    <a class="page-link" href="#">{{ num }}</a>
+                  </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&type={{ selected_type }}&sort={{ current_sort }}&page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?q={{ query }}&type={{ selected_type }}&sort={{ current_sort }}&page={{ page_obj.next_page_number }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?q={{ query }}&type={{ selected_type }}&sort={{ current_sort }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm p-4 text-center">
+              <div class="py-5">
+                <i class="bi bi-search display-1 text-muted mb-3"></i>
+                <h2 class="h4 mb-3">No results found for "{{ query }}"</h2>
+                <p class="text-muted mb-4">We couldn't find any matches for your search term. Try different keywords or check the spelling.</p>
+
+                {% if suggestions %}
+                  <div class="mb-4">
+                    <h3 class="h5 mb-3">Did you mean:</h3>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                      {% for suggestion in suggestions %}
+                        <a href="{% url 'movies:search' %}?q={{ suggestion }}" class="btn btn-outline-primary btn-sm">{{ suggestion }}</a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="mt-4">
+                  <a href="{% url 'movies:home' %}" class="btn btn-primary"><i class="bi bi-house-door me-1"></i>Back to Home</a>
+                  <a href="{% url 'movies:media_list' %}" class="btn btn-outline-secondary ms-2"><i class="bi bi-film me-1"></i>Browse All Content</a>
+                </div>
+              </div>
+            </div>
+
+            {% if recent_searches %}
+              <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                  <h3 class="h5 mb-0">Recent Searches</h3>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for term in recent_searches %}
+                      <a href="{% url 'movies:search' %}?q={{ term }}" class="text-decoration-none"><span class="badge bg-light text-dark p-2"><i class="bi bi-clock-history me-1"></i>{{ term }}</span></a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="card border-0 shadow-sm mt-4">
+              <div class="card-header bg-light">
+                <h3 class="h5 mb-0">Popular Content</h3>
+              </div>
+              <div class="card-body">
+                <div class="row row-cols-2 row-cols-md-3 g-3">
+                  {% for media in popular_media %}
+                    <div class="col">
+                      <div class="card h-100 border-0">
+                        <a href="{% url 'movies:media_detail' slug=media.slug %}" class="text-decoration-none">
+                          <div class="position-relative">
+                            {% if media.poster %}
+                              <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}" style="height: 150px; object-fit: cover;" />
+                            {% else %}
+                              <img src="https://via.placeholder.com/150x150?text=No+Poster" class="card-img-top" alt="No Poster" />
+                            {% endif %}
+                            <div class="position-absolute bottom-0 start-0 bg-dark bg-opacity-75 text-white px-2 py-1 small">{{ media.media_type.name }}</div>
+                          </div>
+                          <div class="card-body p-2">
+                            <h6 class="card-title mb-0 text-truncate">{{ media.title }}</h6>
+                            <p class="card-text small text-muted">{{ media.release_year }}</p>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'movies/js/movies.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        Movie Platform
+      {% endblock %}
+    </title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --dark-color: #212529;
+        --light-color: #f8f9fa;
+        --success-color: #198754;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #0dcaf0;
+      }
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: #f8f9fa;
+      }
+      
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+      }
+      
+      .navbar-brand {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+      
+      .content {
+        flex: 1;
+      }
+      
+      footer {
+        margin-top: auto;
+        padding: 2rem 0;
+        background-color: var(--dark-color);
+        color: white;
+      }
+      
+      .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        overflow: hidden;
+        height: 100%;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      
+      .media-card .card-img-top {
+        height: 250px;
+        object-fit: cover;
+      }
+      
+      .badge-genre {
+        background-color: var(--primary-color);
+        color: white;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      
+      .hero-section {
+        background-color: var(--dark-color);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+      }
+      
+      .section-title {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+      
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+      }
+      
+      /* Auth Forms */
+      .auth-form {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Rating Stars */
+      .rating {
+        color: var(--warning-color);
+      }
+      
+      /* Custom button styles */
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      
+      .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      
+      .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      
+      /* Custom alert styles */
+      .alert {
+        border-radius: 3px;
+        border-left-width: 4px;
+      }
+      
+      /* Media Item Details */
+      .media-poster {
+        max-height: 400px;
+        object-fit: contain;
+      }
+      
+      .rating-value {
+        font-size: 3rem;
+        font-weight: bold;
+      }
+      
+      /* Watchlist icon */
+      .watchlist-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      
+      .watchlist-icon.active {
+        color: var(--danger-color);
+      }
+      
+      /* Header banner */
+      .header-banner {
+        height: 450px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+      
+      .header-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
+      }
+      
+      .header-content {
+        position: relative;
+        z-index: 1;
+        color: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-bottom: 2rem;
+      }
+      
+      /* Sticky navbar on scroll */
+      .navbar.sticky-top {
+        transition: all 0.3s;
+      }
+      
+      .navbar.sticky-top.scrolled {
+        background-color: rgba(33, 37, 41, 0.95) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .media-card .card-img-top {
+          height: 200px;
+        }
+      
+        .header-banner {
+          height: 350px;
+        }
+      }
+    </style>
+
+    {% block extra_css %}
+
+    {% endblock %}
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'website:home' %}"><i class="bi bi-film"></i> MovieHub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'website' %}active{% endif %}" aria-current="page" href="{% url 'website:home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'movies' %}active{% endif %}" href="{% url 'movies:home' %}">Movies</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name == 'media_list' %}active{% endif %}" href="{% url 'movies:media_list' %}">Browse</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Movie">Movies</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Series">TV Series</a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'movies:genre_list' %}">All Genres</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">About Us</a>
+              <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                <li>
+                  <a class="dropdown-item" href="{% url 'website:about' %}">About MovieHub</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'website:contact' %}">Contact Us</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'website:faq' %}">FAQ</a>
+                </li>
+              </ul>
+            </li>
+            {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Upload</a>
+                <ul class="dropdown-menu" aria-labelledby="uploadDropdown">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'movies:movie_create' %}">Upload Movie</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'movies:series_create' %}">Upload Series</a>
+                  </li>
+                </ul>
+              </li>
+            {% endif %}
+          </ul>
+          <form class="d-flex me-2" action="{% url 'movies:search' %}" method="get">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" />
+            <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+          </form>
+          <div class="d-flex">
+            {% if user.is_authenticated %}
+              <div class="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle me-1"></i> {{ user.email }}</button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'movies:watchlist' %}"><i class="bi bi-bookmark-heart me-1"></i> My Watchlist</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"><i class="bi bi-person me-1"></i> Profile</a>
+                  </li>
+                  {% if user.is_staff %}
+                    <li>
+                      <a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear me-1"></i> Admin</a>
+                    </li>
+                  {% endif %}
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+                  </li>
+                </ul>
+              </div>
+            {% else %}
+              <a href="#" class="btn btn-outline-light me-2">Login</a>
+              <a href="#" class="btn btn-primary">Sign Up</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="content">
+      {% block content %}
+
+      {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3 mb-4 mb-md-0">
+            <h5 class="mb-4">MovieHub</h5>
+            <p>The ultimate platform for movie and TV series enthusiasts. Discover, watch, and share your favorite content.</p>
+            <div class="social-icons">
+              <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4 mb-md-0">
+            <h5 class="mb-4">Explore</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a href="{% url 'website:home' %}" class="text-light text-decoration-none">Home</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'movies:home' %}" class="text-light text-decoration-none">Movies</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'movies:media_list' %}?type=Movie" class="text-light text-decoration-none">Browse Movies</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'movies:media_list' %}?type=Series" class="text-light text-decoration-none">TV Series</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'movies:genre_list' %}" class="text-light text-decoration-none">Genres</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4 mb-md-0">
+            <h5 class="mb-4">About</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a href="{% url 'website:about' %}" class="text-light text-decoration-none">About Us</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'website:contact' %}" class="text-light text-decoration-none">Contact</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'website:faq' %}" class="text-light text-decoration-none">FAQ</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'website:privacy' %}" class="text-light text-decoration-none">Privacy Policy</a>
+              </li>
+              <li class="mb-2">
+                <a href="{% url 'website:terms' %}" class="text-light text-decoration-none">Terms of Service</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h5 class="mb-4">Account</h5>
+            <ul class="list-unstyled">
+              {% if user.is_authenticated %}
+                <li class="mb-2">
+                  <a href="#" class="text-light text-decoration-none">My Profile</a>
+                </li>
+                <li class="mb-2">
+                  <a href="{% url 'movies:watchlist' %}" class="text-light text-decoration-none">Watchlist</a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-light text-decoration-none">Logout</a>
+                </li>
+              {% else %}
+                <li class="mb-2">
+                  <a href="#" class="text-light text-decoration-none">Login</a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-light text-decoration-none">Sign Up</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+        <hr class="my-4 bg-light" />
+        <div class="row">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <p class="mb-0">
+              &copy;{% now 'Y' %}MovieHub. All rights reserved.
+            </p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <ul class="list-inline mb-0">
+              <li class="list-inline-item">
+                <a href="{% url 'website:privacy' %}" class="text-light text-decoration-none">Privacy Policy</a>
+              </li>
+              <li class="list-inline-item mx-3">|</li>
+              <li class="list-inline-item">
+                <a href="{% url 'website:terms' %}" class="text-light text-decoration-none">Terms of Service</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Custom Script for sticky navbar -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const navbar = document.querySelector('.navbar.sticky-top')
+        if (navbar) {
+          window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+              navbar.classList.add('scrolled')
+            } else {
+              navbar.classList.remove('scrolled')
+            }
+          })
+        }
+      })
+    </script>
+
+    {% block extra_js %}
+
+    {% endblock %}
+  </body>
+</html>

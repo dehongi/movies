@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  About Us - MovieHub
+{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <section class="py-5 bg-dark text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          <h1 class="fw-bold">About MovieHub</h1>
+          <p class="lead">Your ultimate destination for movies and TV series</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <img src="https://source.unsplash.com/random/600x400/?cinema" alt="About MovieHub" class="img-fluid rounded shadow-lg" />
+        </div>
+        <div class="col-lg-6">
+          <h2 class="section-title">Our Story</h2>
+          <p>MovieHub was founded in 2023 with a simple mission: to create the ultimate platform for movie and TV series enthusiasts to discover, watch, and share their favorite content.</p>
+          <p>What started as a small project has grown into a comprehensive media platform with thousands of titles and a vibrant community of users who share our passion for great storytelling.</p>
+          <p>We believe that everyone should have access to high-quality entertainment, and we're committed to providing the best possible experience for our users.</p>
+        </div>
+      </div>
+
+      <div class="row align-items-center flex-lg-row-reverse">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <img src="https://source.unsplash.com/random/600x400/?movie,technology" alt="Our Mission" class="img-fluid rounded shadow-lg" />
+        </div>
+        <div class="col-lg-6">
+          <h2 class="section-title">Our Mission</h2>
+          <p>At MovieHub, we're on a mission to transform how people discover and enjoy movies and TV series. We've built a platform that not only offers a vast library of content but also creates a community where users can share recommendations and discuss their favorite shows.</p>
+          <p>We're dedicated to:</p>
+          <ul>
+            <li>Providing a user-friendly platform with a diverse range of content</li>
+            <li>Supporting content creators and the entertainment industry</li>
+            <li>Building a community of entertainment enthusiasts</li>
+            <li>Constantly innovating to improve the user experience</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col-lg-8 mx-auto text-center">
+          <h2 class="section-title">Why Choose MovieHub</h2>
+          <p class="lead">We offer features designed to enhance your entertainment experience</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="bi bi-collection-play text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="card-title">Extensive Library</h4>
+              <p class="card-text">Access thousands of movies and TV series across different genres, from classics to the latest releases.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="bi bi-laptop text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="card-title">Multi-device Access</h4>
+              <p class="card-text">Watch on your laptop, tablet, phone, or smart TV. Your experience syncs across all your devices.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="bi bi-bookmark-heart text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="card-title">Personalized Watchlists</h4>
+              <p class="card-text">Create and manage your personal watchlist to keep track of what you want to watch next.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="bi bi-people text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="card-title">Community</h4>
+              <p class="card-text">Share reviews, ratings, and recommendations with a community of fellow entertainment enthusiasts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col-lg-8 mx-auto text-center">
+          <h2 class="section-title">Meet Our Team</h2>
+          <p class="lead">The passionate people behind MovieHub</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="card-img-top" alt="Team Member" />
+            <div class="card-body text-center">
+              <h5 class="card-title">John Doe</h5>
+              <p class="text-muted">Founder & CEO</p>
+              <p class="card-text small">Film enthusiast with over 15 years of experience in the entertainment industry.</p>
+              <div class="social-icons mt-3">
+                <a href="#" class="text-secondary me-2"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-secondary me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-secondary"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="card-img-top" alt="Team Member" />
+            <div class="card-body text-center">
+              <h5 class="card-title">Jane Smith</h5>
+              <p class="text-muted">CTO</p>
+              <p class="card-text small">Tech innovator with a passion for creating seamless digital experiences.</p>
+              <div class="social-icons mt-3">
+                <a href="#" class="text-secondary me-2"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-secondary me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-secondary"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="https://randomuser.me/api/portraits/men/67.jpg" class="card-img-top" alt="Team Member" />
+            <div class="card-body text-center">
+              <h5 class="card-title">Robert Johnson</h5>
+              <p class="text-muted">Content Director</p>
+              <p class="card-text small">Former film critic with an eye for quality content across all genres.</p>
+              <div class="social-icons mt-3">
+                <a href="#" class="text-secondary me-2"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-secondary me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-secondary"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="https://randomuser.me/api/portraits/women/63.jpg" class="card-img-top" alt="Team Member" />
+            <div class="card-body text-center">
+              <h5 class="card-title">Emily Chen</h5>
+              <p class="text-muted">UX Designer</p>
+              <p class="card-text small">Dedicated to creating intuitive and beautiful user experiences.</p>
+              <div class="social-icons mt-3">
+                <a href="#" class="text-secondary me-2"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-secondary me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-secondary"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-5 bg-primary text-white">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+          <h2 class="fw-bold">Ready to start watching?</h2>
+          <p class="lead mb-0">Join thousands of movie lovers on MovieHub today.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          {% if not user.is_authenticated %}
+            <a href="#" class="btn btn-light btn-lg fw-bold">Sign Up Now</a>
+          {% else %}
+            <a href="{% url 'movies:media_list' %}" class="btn btn-light btn-lg fw-bold">Browse Movies</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

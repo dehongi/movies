@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  FAQ - MovieHub
+{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <section class="py-5 bg-dark text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          <h1 class="fw-bold">Frequently Asked Questions</h1>
+          <p class="lead">Find answers to common questions about MovieHub</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h4 class="mb-3 text-center">Can't find what you're looking for?</h4>
+              <form class="mb-0">
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-lg" placeholder="Search our FAQ..." />
+                  <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Categories -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+          <h2 class="section-title">Browse by Category</h2>
+          <p>Find answers based on different topics</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-4">
+          <nav>
+            <div class="nav nav-tabs nav-fill" id="faq-tabs" role="tablist">
+              <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true"><i class="bi bi-info-circle me-2"></i>General</button>
+              <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="false"><i class="bi bi-person me-2"></i>Account</button>
+              <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="false"><i class="bi bi-film me-2"></i>Content</button>
+              <button class="nav-link" id="billing-tab" data-bs-toggle="tab" data-bs-target="#billing" type="button" role="tab" aria-controls="billing" aria-selected="false"><i class="bi bi-credit-card me-2"></i>Billing</button>
+              <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab" aria-controls="technical" aria-selected="false"><i class="bi bi-gear me-2"></i>Technical</button>
+            </div>
+          </nav>
+
+          <div class="tab-content" id="faq-tabs-content">
+            <!-- General FAQ -->
+            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+              <div class="accordion mt-4" id="accordionGeneral">
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="general-heading-1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general-collapse-1" aria-expanded="true" aria-controls="general-collapse-1">What is MovieHub?</button></h2>
+                  <div id="general-collapse-1" class="accordion-collapse collapse show" aria-labelledby="general-heading-1" data-bs-parent="#accordionGeneral">
+                    <div class="accordion-body">MovieHub is a comprehensive online platform where users can discover, watch, and share their favorite movies and TV series. We offer a vast library of content across different genres, from classics to the latest releases.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="general-heading-2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general-collapse-2" aria-expanded="false" aria-controls="general-collapse-2">Is MovieHub available worldwide?</button></h2>
+                  <div id="general-collapse-2" class="accordion-collapse collapse" aria-labelledby="general-heading-2" data-bs-parent="#accordionGeneral">
+                    <div class="accordion-body">Yes, MovieHub is available in most countries worldwide. However, content availability may vary by region due to licensing agreements. We're constantly working to expand our library in all regions.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="general-heading-3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general-collapse-3" aria-expanded="false" aria-controls="general-collapse-3">How do I contact customer support?</button></h2>
+                  <div id="general-collapse-3" class="accordion-collapse collapse" aria-labelledby="general-heading-3" data-bs-parent="#accordionGeneral">
+                    <div class="accordion-body">
+                      You can reach our customer support team through multiple channels: <br />
+                      - Email: support@moviehub.com <br />
+                      - Phone: +1 (800) 123-4567 (9 AM - 6 PM EST, Monday-Friday) <br />
+                      - Live Chat: Available on our website during business hours <br />
+                      - Contact Form: Visit our <a href="{% url 'website:contact' %}">Contact Page</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Account FAQ -->
+            <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+              <div class="accordion mt-4" id="accordionAccount">
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="account-heading-1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#account-collapse-1" aria-expanded="true" aria-controls="account-collapse-1">How do I create an account?</button></h2>
+                  <div id="account-collapse-1" class="accordion-collapse collapse show" aria-labelledby="account-heading-1" data-bs-parent="#accordionAccount">
+                    <div class="accordion-body">Creating an account is simple! Click on the "Sign Up" button at the top of any page, fill in your details (email, password, and name), verify your email address, and you're ready to go. You can also sign up using your Google, Facebook, or Apple account for faster registration.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="account-heading-2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account-collapse-2" aria-expanded="false" aria-controls="account-collapse-2">How can I reset my password?</button></h2>
+                  <div id="account-collapse-2" class="accordion-collapse collapse" aria-labelledby="account-heading-2" data-bs-parent="#accordionAccount">
+                    <div class="accordion-body">If you've forgotten your password, click on the "Login" button, then select "Forgot Password." Enter your email address, and we'll send you a link to reset your password. For security reasons, the link expires after 24 hours.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="account-heading-3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account-collapse-3" aria-expanded="false" aria-controls="account-collapse-3">Can I have multiple profiles under one account?</button></h2>
+                  <div id="account-collapse-3" class="accordion-collapse collapse" aria-labelledby="account-heading-3" data-bs-parent="#accordionAccount">
+                    <div class="accordion-body">Yes, depending on your subscription plan. Standard plans allow up to 2 profiles, while Premium plans offer up to 5 profiles per account. Each profile can have its own watchlist, recommendations, and viewing history.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content FAQ -->
+            <div class="tab-pane fade" id="content" role="tabpanel" aria-labelledby="content-tab">
+              <div class="accordion mt-4" id="accordionContent">
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="content-heading-1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#content-collapse-1" aria-expanded="true" aria-controls="content-collapse-1">How often is new content added?</button></h2>
+                  <div id="content-collapse-1" class="accordion-collapse collapse show" aria-labelledby="content-heading-1" data-bs-parent="#accordionContent">
+                    <div class="accordion-body">We add new movies and TV series to our platform weekly. Every Friday, we release a batch of new titles. For popular series, we often add new episodes within 24 hours of their original broadcast or streaming release.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="content-heading-2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#content-collapse-2" aria-expanded="false" aria-controls="content-collapse-2">Can I download movies to watch offline?</button></h2>
+                  <div id="content-collapse-2" class="accordion-collapse collapse" aria-labelledby="content-heading-2" data-bs-parent="#accordionContent">
+                    <div class="accordion-body">Yes, Premium and Standard subscribers can download movies and episodes for offline viewing on mobile devices. Basic subscribers don't have access to this feature. Downloaded content expires after 30 days or 48 hours after you start watching.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="content-heading-3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#content-collapse-3" aria-expanded="false" aria-controls="content-collapse-3">What video quality options are available?</button></h2>
+                  <div id="content-collapse-3" class="accordion-collapse collapse" aria-labelledby="content-heading-3" data-bs-parent="#accordionContent">
+                    <div class="accordion-body">
+                      Video quality depends on your subscription plan:<ul>
+                        <li>Basic: HD (720p)</li>
+                        <li>Standard: Full HD (1080p)</li>
+                        <li>Premium: 4K Ultra HD + HDR</li>
+                      </ul>The actual quality may vary based on your internet connection speed. Our adaptive streaming technology automatically adjusts quality for the best viewing experience.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Billing FAQ -->
+            <div class="tab-pane fade" id="billing" role="tabpanel" aria-labelledby="billing-tab">
+              <div class="accordion mt-4" id="accordionBilling">
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="billing-heading-1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#billing-collapse-1" aria-expanded="true" aria-controls="billing-collapse-1">What subscription plans do you offer?</button></h2>
+                  <div id="billing-collapse-1" class="accordion-collapse collapse show" aria-labelledby="billing-heading-1" data-bs-parent="#accordionBilling">
+                    <div class="accordion-body">
+                      We offer three subscription tiers:<ul>
+                        <li>Basic ($8.99/month): Access to all content in HD quality, 1 device at a time</li>
+                        <li>Standard ($12.99/month): Full HD quality, 2 devices simultaneously, downloads enabled</li>
+                        <li>Premium ($16.99/month): 4K Ultra HD + HDR, 5 devices simultaneously, downloads enabled, premium content access</li>
+                      </ul>All plans come with a 7-day free trial for new users.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="billing-heading-2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billing-collapse-2" aria-expanded="false" aria-controls="billing-collapse-2">How do I cancel my subscription?</button></h2>
+                  <div id="billing-collapse-2" class="accordion-collapse collapse" aria-labelledby="billing-heading-2" data-bs-parent="#accordionBilling">
+                    <div class="accordion-body">You can cancel your subscription at any time through your Account Settings. Go to "Profile" > "Subscription" > "Cancel Subscription." Your subscription will remain active until the end of your current billing cycle. We don't offer prorated refunds for partial months.</div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="billing-heading-3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billing-collapse-3" aria-expanded="false" aria-controls="billing-collapse-3">What payment methods do you accept?</button></h2>
+                  <div id="billing-collapse-3" class="accordion-collapse collapse" aria-labelledby="billing-heading-3" data-bs-parent="#accordionBilling">
+                    <div class="accordion-body">We accept major credit and debit cards (Visa, Mastercard, American Express, Discover), PayPal, Apple Pay, and Google Pay. In some regions, we also support local payment methods. Gift cards and promotional codes can also be applied to your account.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical FAQ -->
+            <div class="tab-pane fade" id="technical" role="tabpanel" aria-labelledby="technical-tab">
+              <div class="accordion mt-4" id="accordionTechnical">
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="technical-heading-1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#technical-collapse-1" aria-expanded="true" aria-controls="technical-collapse-1">What devices can I use to watch MovieHub?</button></h2>
+                  <div id="technical-collapse-1" class="accordion-collapse collapse show" aria-labelledby="technical-heading-1" data-bs-parent="#accordionTechnical">
+                    <div class="accordion-body">
+                      MovieHub is available on a wide range of devices:<ul>
+                        <li>Web browsers (Chrome, Firefox, Safari, Edge)</li>
+                        <li>Mobile devices (iOS and Android apps)</li>
+                        <li>Smart TVs (Samsung, LG, Sony, etc.)</li>
+                        <li>Streaming devices (Roku, Apple TV, Chromecast, Amazon Fire TV)</li>
+                        <li>Gaming consoles (PlayStation, Xbox)</li>
+                      </ul>For the best experience, we recommend using the latest version of your device's operating system and our app.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="technical-heading-2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical-collapse-2" aria-expanded="false" aria-controls="technical-collapse-2">What internet speed do I need for streaming?</button></h2>
+                  <div id="technical-collapse-2" class="accordion-collapse collapse" aria-labelledby="technical-heading-2" data-bs-parent="#accordionTechnical">
+                    <div class="accordion-body">
+                      We recommend the following internet speeds for optimal streaming:<ul>
+                        <li>SD quality: 3+ Mbps</li>
+                        <li>HD quality (720p): 5+ Mbps</li>
+                        <li>Full HD quality (1080p): 10+ Mbps</li>
+                        <li>4K Ultra HD quality: 25+ Mbps</li>
+                      </ul>You can check your current internet speed in your account settings under "Connection Test."
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item border mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="technical-heading-3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical-collapse-3" aria-expanded="false" aria-controls="technical-collapse-3">How do I fix buffering issues?</button></h2>
+                  <div id="technical-collapse-3" class="accordion-collapse collapse" aria-labelledby="technical-heading-3" data-bs-parent="#accordionTechnical">
+                    <div class="accordion-body">
+                      If you're experiencing buffering:<ol>
+                        <li>Check your internet connection speed</li>
+                        <li>Try lowering the video quality in the player settings</li>
+                        <li>Close other applications or devices using your network</li>
+                        <li>Restart your router or modem</li>
+                        <li>Connect to a wired connection instead of Wi-Fi if possible</li>
+                        <li>Clear your browser cache or app data</li>
+                        <li>Try a different device</li>
+                      </ol>If problems persist, please contact our technical support team.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h2 class="fw-bold">Still have questions?</h2>
+          <p class="lead mb-4">Our support team is here to help you with any questions or issues you might have.</p>
+          <a href="{% url 'website:contact' %}" class="btn btn-primary btn-lg">Contact Us</a>
+        </div>
+        <div class="col-lg-6">
+          <img src="https://source.unsplash.com/random/600x400/?customer-service" alt="Customer Support" class="img-fluid rounded shadow-lg" />
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ genre.name }} - Movies & Series | MovieHub{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'movies/css/movies.css' %}">
+{% endblock %}
+
+{% block content %}
+  <!-- Genre Header -->
+  <div class="genre-header py-5" style="background-color: #051e34;">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 text-white fw-bold mb-2">{{ genre.name }}</h1>
+          <p class="lead text-light mb-0">Discover {{ media_count }} movies and series in the {{ genre.name }} genre</p>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Sort By: {{ current_sort_display }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+              <li><a class="dropdown-item {% if current_sort == 'newest' %}active{% endif %}" href="?sort=newest">Newest First</a></li>
+              <li><a class="dropdown-item {% if current_sort == 'oldest' %}active{% endif %}" href="?sort=oldest">Oldest First</a></li>
+              <li><a class="dropdown-item {% if current_sort == 'title_asc' %}active{% endif %}" href="?sort=title_asc">Title (A-Z)</a></li>
+              <li><a class="dropdown-item {% if current_sort == 'title_desc' %}active{% endif %}" href="?sort=title_desc">Title (Z-A)</a></li>
+              <li><a class="dropdown-item {% if current_sort == 'popular' %}active{% endif %}" href="?sort=popular">Most Popular</a></li>
+              <li><a class="dropdown-item {% if current_sort == 'rating' %}active{% endif %}" href="?sort=rating">Highest Rated</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Genre Content -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3 mb-4 mb-lg-0">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Filter Options</h5>
+            </div>
+            <div class="card-body">
+              <form action="" method="get" id="filterForm">
+                <!-- Preserve current sort -->
+                <input type="hidden" name="sort" value="{{ current_sort }}">
+                
+                <div class="mb-4">
+                  <h6 class="mb-3">Media Type</h6>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="media_type" id="allTypes" value="" {% if not selected_media_type %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="allTypes">All Types</label>
+                  </div>
+                  {% for type in media_types %}
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="media_type" id="type{{ type.id }}" value="{{ type.id }}" {% if selected_media_type == type.id|stringformat:'i' %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="type{{ type.id }}">{{ type.name }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+                
+                <div class="mb-4">
+                  <h6 class="mb-3">Release Year</h6>
+                  <select class="form-select" name="year" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if selected_year == year|stringformat:'i' %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <div class="mb-4">
+                  <h6 class="mb-3">Rating</h6>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="rating" id="allRatings" value="" {% if not selected_rating %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="allRatings">All Ratings</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="rating" id="rating8" value="8" {% if selected_rating == '8' %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="rating8">8+ <i class="bi bi-star-fill text-warning"></i></label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="rating" id="rating7" value="7" {% if selected_rating == '7' %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="rating7">7+ <i class="bi bi-star-fill text-warning"></i></label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="rating" id="rating6" value="6" {% if selected_rating == '6' %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="rating6">6+ <i class="bi bi-star-fill text-warning"></i></label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="rating" id="rating5" value="5" {% if selected_rating == '5' %}checked{% endif %} onchange="this.form.submit()">
+                    <label class="form-check-label" for="rating5">5+ <i class="bi bi-star-fill text-warning"></i></label>
+                  </div>
+                </div>
+                
+                <button type="button" class="btn btn-outline-secondary w-100" id="resetFilters">
+                  <i class="bi bi-x-circle me-2"></i>Reset Filters
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Media List -->
+        <div class="col-lg-9">
+          {% if media_list %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+              {% for media in media_list %}
+                <div class="col">
+                  <div class="card h-100 border-0 shadow-sm media-card">
+                    <div class="media-card-img-container">
+                      {% if media.poster %}
+                        <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}">
+                      {% else %}
+                        <img src="https://via.placeholder.com/300x450?text=No+Poster" class="card-img-top" alt="No Poster">
+                      {% endif %}
+                      <div class="media-card-overlay">
+                        <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-primary btn-sm">
+                          <i class="bi bi-info-circle me-1"></i> Details
+                        </a>
+                        {% if user.is_authenticated %}
+                          <button class="btn btn-outline-light btn-sm ms-2 watchlist-btn" data-media-id="{{ media.id }}">
+                            <i class="bi {% if media.id in watchlist_ids %}bi-bookmark-check-fill{% else %}bi-bookmark-plus{% endif %}"></i>
+                          </button>
+                        {% endif %}
+                      </div>
+                      <span class="media-type-badge {% if media.media_type.name == 'Movie' %}movie{% else %}series{% endif %}">
+                        {{ media.media_type.name }}
+                      </span>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title mb-1">
+                        <a href="{% url 'movies:media_detail' slug=media.slug %}" class="text-decoration-none text-dark">
+                          {{ media.title }}
+                        </a>
+                      </h5>
+                      <p class="card-text text-muted small mb-2">{{ media.release_year }}</p>
+                      
+                      <div class="d-flex align-items-center">
+                        {% if media.avg_rating > 0 %}
+                          <div class="me-2">
+                            <span class="badge bg-primary">{{ media.avg_rating|floatformat:1 }}</span>
+                          </div>
+                          <div class="rating-stars small">
+                            {% for i in '12345'|make_list %}
+                              {% if forloop.counter <= media.avg_rating|floordiv:2 %}
+                                <i class="bi bi-star-fill"></i>
+                              {% elif forloop.counter <= media.avg_rating|floordiv:2|add:'0.5' %}
+                                <i class="bi bi-star-half"></i>
+                              {% else %}
+                                <i class="bi bi-star"></i>
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <div class="text-muted small">No ratings yet</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if media_list.has_other_pages %}
+              <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                  {% if media_list.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ media_list.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  
+                  {% for num in media_list.paginator.page_range %}
+                    {% if media_list.number == num %}
+                      <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > media_list.number|add:'-3' and num < media_list.number|add:'3' %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% if media_list.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ media_list.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ media_list.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+            {% endif %}
+          {% else %}
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              No movies or series found matching the selected criteria. Try adjusting your filters.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'movies/js/movies.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Reset filters button
+      document.getElementById('resetFilters').addEventListener('click', function() {
+        window.location.href = '{% url "movies:genre_detail" slug=genre.slug %}';
+      });
+    });
+  </script>
+{% endblock %} 

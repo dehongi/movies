@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  MovieHub - Movies App
+{% endblock %}
+
+{% block content %}
+  <!-- Hero Banner -->
+  <section class="hero-section bg-dark py-5 mb-4">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 text-white">
+          <h1 class="display-4 fw-bold mb-3">Movies & TV Shows</h1>
+          <p class="lead mb-4">Explore our collection of movies and TV series. Find your favorites and discover new content.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'movies:media_list' %}?type=Movie" class="btn btn-primary">Browse Movies</a>
+            <a href="{% url 'movies:media_list' %}?type=Series" class="btn btn-outline-light">Browse Series</a>
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <img src="https://source.unsplash.com/random/600x400/?movie,cinema" alt="Movies" class="img-fluid rounded shadow-lg" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Content -->
+  <section class="featured-section mb-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">Featured Content</h2>
+        <a href="{% url 'movies:media_list' %}?featured=true" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+      <div class="row g-4">
+        {% for media in featured_media %}
+          <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card media-card h-100 shadow-sm">
+              {% if media.poster %}
+                <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}" />
+              {% else %}
+                <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ media.title }}</h5>
+                <p class="card-text text-muted small">{{ media.release_year }} • {{ media.media_type.name }}</p>
+                <div class="mb-2">
+                  {% for genre in media.genres.all|slice:':3' %}
+                    <span class="badge bg-primary">{{ genre.name }}</span>
+                  {% endfor %}
+                </div>
+                <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-primary btn-sm mt-2">View Details</a>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="alert alert-info">No featured content available at the moment.</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Content -->
+  <section class="latest-section py-5 bg-light">
+    <div class="container">
+      <h2 class="section-title mb-4">Latest Additions</h2>
+
+      <!-- Latest Movies -->
+      <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="h4 mb-0">Latest Movies</h3>
+          <a href="{% url 'movies:media_list' %}?type=Movie" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="row g-3">
+          {% for movie in latest_movies %}
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card media-card h-100 shadow-sm">
+                {% if movie.poster %}
+                  <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}" />
+                {% else %}
+                  <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+                {% endif %}
+                <div class="card-body p-2">
+                  <h6 class="card-title text-truncate">{{ movie.title }}</h6>
+                  <p class="card-text small text-muted">{{ movie.release_year }}</p>
+                  <a href="{% url 'movies:media_detail' slug=movie.slug %}" class="stretched-link"></a>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <div class="alert alert-info">No movies available at the moment.</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Latest TV Series -->
+      <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="h4 mb-0">Latest TV Series</h3>
+          <a href="{% url 'movies:media_list' %}?type=Series" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="row g-3">
+          {% for series in latest_series %}
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card media-card h-100 shadow-sm">
+                {% if series.poster %}
+                  <img src="{{ series.poster.url }}" class="card-img-top" alt="{{ series.title }}" />
+                {% else %}
+                  <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+                {% endif %}
+                <div class="card-body p-2">
+                  <h6 class="card-title text-truncate">{{ series.title }}</h6>
+                  <p class="card-text small text-muted">
+                    {{ series.release_year }} • {{ series.series_details.total_seasons }} season{% if series.series_details.total_seasons != 1 %}s{% endif %}
+                  </p>
+                  <a href="{% url 'movies:media_detail' slug=series.slug %}" class="stretched-link"></a>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <div class="alert alert-info">No TV series available at the moment.</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Content -->
+  <section class="popular-section py-5">
+    <div class="container">
+      <h2 class="section-title mb-4">Popular Content</h2>
+      <div class="row g-4">
+        {% for media in popular_media %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="row g-0">
+                <div class="col-4">
+                  {% if media.poster %}
+                    <img src="{{ media.poster.url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ media.title }}" />
+                  {% else %}
+                    <img src="https://via.placeholder.com/350x200?text=No+Image" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="No Image" />
+                  {% endif %}
+                </div>
+                <div class="col-8">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ media.title }}</h5>
+                    <p class="card-text small text-muted">{{ media.release_year }} • {{ media.media_type.name }}</p>
+                    <div class="d-flex align-items-center mb-2">
+                      <i class="bi bi-eye-fill text-primary me-1"></i>
+                      <span>{{ media.views_count }} views</span>
+                    </div>
+                    <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="alert alert-info">No popular content available at the moment.</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {% if user.is_authenticated and user.is_staff %}
+    <!-- Management Section -->
+    <section class="admin-section py-5 bg-light">
+      <div class="container">
+        <h2 class="section-title mb-4">Content Management</h2>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body text-center py-4">
+                <i class="bi bi-film text-primary fs-1 mb-3"></i>
+                <h5 class="card-title">Add Movie</h5>
+                <p class="card-text">Upload a new movie to the platform.</p>
+                <a href="{% url 'movies:movie_create' %}" class="btn btn-primary">Add Movie</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body text-center py-4">
+                <i class="bi bi-tv text-primary fs-1 mb-3"></i>
+                <h5 class="card-title">Add Series</h5>
+                <p class="card-text">Upload a new TV series to the platform.</p>
+                <a href="{% url 'movies:series_create' %}" class="btn btn-primary">Add Series</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body text-center py-4">
+                <i class="bi bi-tags text-primary fs-1 mb-3"></i>
+                <h5 class="card-title">Manage Genres</h5>
+                <p class="card-text">Add or edit content genres.</p>
+                <a href="{% url 'movies:genre_list' %}" class="btn btn-primary">Manage Genres</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body text-center py-4">
+                <i class="bi bi-gear text-primary fs-1 mb-3"></i>
+                <h5 class="card-title">Admin Panel</h5>
+                <p class="card-text">Access the admin dashboard.</p>
+                <a href="{% url 'admin:index' %}" class="btn btn-primary">Go to Admin</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}
