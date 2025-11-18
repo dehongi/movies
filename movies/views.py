@@ -32,6 +32,8 @@ from .models import (
     Platform,
     MediaPlatform,
     Podcast,
+    ShortVideo,
+    Video,
 )
 from .forms import (
     GenreForm,
