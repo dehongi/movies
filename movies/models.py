@@ -45,8 +45,8 @@ class Media(models.Model):
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=275, unique=True, blank=True)
-    description = models.TextField()
-    release_year = models.PositiveIntegerField()
+    description = models.TextField(blank=True)
+    release_year = models.PositiveIntegerField(blank=True, null=True)
     poster = models.ImageField(upload_to="media_posters/", blank=True, null=True)
     trailer_url = models.URLField(blank=True, null=True)
 
@@ -90,9 +90,13 @@ class Movie(models.Model):
     media = models.OneToOneField(
         Media, on_delete=models.CASCADE, primary_key=True, related_name="movie_details"
     )
-    duration = models.PositiveIntegerField(help_text="Duration in minutes")
-    director = models.CharField(max_length=255)
-    cast = models.TextField(help_text="Main cast members, separated by commas")
+    duration = models.PositiveIntegerField(
+        help_text="Duration in minutes", blank=True, null=True
+    )
+    director = models.CharField(max_length=255, blank=True)
+    cast = models.TextField(
+        help_text="Main cast members, separated by commas", blank=True
+    )
 
     def __str__(self):
         return f"Movie: {self.media.title}"
@@ -117,7 +121,7 @@ class Season(models.Model):
     series = models.ForeignKey(Series, on_delete=models.CASCADE, related_name="seasons")
     title = models.CharField(max_length=255)
     season_number = models.PositiveIntegerField()
-    release_year = models.PositiveIntegerField()
+    release_year = models.PositiveIntegerField(blank=True, null=True)
     poster = models.ImageField(upload_to="season_posters/", blank=True, null=True)
 
     def __str__(self):
@@ -136,9 +140,11 @@ class Episode(models.Model):
     )
     title = models.CharField(max_length=255)
     episode_number = models.PositiveIntegerField()
-    description = models.TextField()
-    duration = models.PositiveIntegerField(help_text="Duration in minutes")
-    release_date = models.DateField()
+    description = models.TextField(blank=True)
+    duration = models.PositiveIntegerField(
+        help_text="Duration in minutes", blank=True, null=True
+    )
+    release_date = models.DateField(blank=True, null=True)
     video_file = models.FileField(upload_to="episodes/", blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
     file_size = models.PositiveIntegerField(
@@ -165,7 +171,9 @@ class VideoFile(models.Model):
     movie = models.ForeignKey(
         Movie, on_delete=models.CASCADE, related_name="video_files"
     )
-    quality = models.CharField(max_length=50, help_text="e.g., 1080p, 720p, 4K")
+    quality = models.CharField(
+        max_length=50, help_text="e.g., 1080p, 720p, 4K", blank=True
+    )
     video_file = models.FileField(upload_to="movies/")
     video_url = models.URLField(blank=True, null=True)
     file_size = models.PositiveIntegerField(
@@ -214,7 +222,7 @@ class Podcast(models.Model):
         primary_key=True,
         related_name="podcast_details",
     )
-    host = models.CharField(max_length=255)
+    host = models.CharField(max_length=255, blank=True)
     episode_count = models.PositiveIntegerField(default=1)
     is_ongoing = models.BooleanField(default=True)
 
@@ -228,7 +236,9 @@ class Video(models.Model):
     media = models.OneToOneField(
         Media, on_delete=models.CASCADE, primary_key=True, related_name="video_details"
     )
-    duration = models.PositiveIntegerField(help_text="Duration in seconds")
+    duration = models.PositiveIntegerField(
+        help_text="Duration in seconds", blank=True, null=True
+    )
 
     def __str__(self):
         return f"Video: {self.media.title}"
@@ -243,7 +253,9 @@ class ShortVideo(models.Model):
         primary_key=True,
         related_name="short_video_details",
     )
-    duration = models.PositiveIntegerField(help_text="Duration in seconds, max 60")
+    duration = models.PositiveIntegerField(
+        help_text="Duration in seconds, max 60", blank=True, null=True
+    )
 
     def __str__(self):
         return f"Short Video: {self.media.title}"
@@ -261,7 +273,7 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField(
         help_text="Rating from 1 to 10", choices=[(i, i) for i in range(1, 11)]
     )
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

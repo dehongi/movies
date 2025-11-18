@@ -65,7 +65,7 @@ class MediaForm(forms.ModelForm):
                 attrs={"class": "form-control", "min": 1900, "max": 2100}
             ),
             "trailer_url": forms.URLInput(attrs={"class": "form-control"}),
-            "genres": forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+            "genres": forms.SelectMultiple(attrs={"class": "form-select"}),
             "media_type": forms.Select(attrs={"class": "form-select"}),
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "privacy": forms.Select(attrs={"class": "form-select"}),
@@ -240,7 +240,7 @@ class MovieWithMediaForm(forms.Form):
     )
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
     is_featured = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
@@ -348,7 +348,7 @@ class SeriesWithMediaForm(forms.Form):
     )
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
     is_featured = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
@@ -397,7 +397,7 @@ class PodcastWithMediaForm(forms.Form):
     )
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
     is_featured = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
@@ -449,7 +449,7 @@ class VideoWithMediaForm(forms.Form):
     )
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
     is_featured = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
@@ -494,7 +494,7 @@ class ShortVideoWithMediaForm(forms.Form):
     )
     genres = forms.ModelMultipleChoiceField(
         queryset=Genre.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
     is_featured = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
