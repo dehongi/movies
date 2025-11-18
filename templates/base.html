@@ -1,19 +1,13 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-        Movie Platform
-      {% endblock %}
-    </title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MovieHub{% endblock %}</title>
 
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -24,208 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Custom CSS -->
-    <style>
-      :root {
-        --primary-color: #0d6efd;
-        --secondary-color: #6c757d;
-        --dark-color: #212529;
-        --light-color: #f8f9fa;
-        --success-color: #198754;
-        --danger-color: #dc3545;
-        --warning-color: #ffc107;
-        --info-color: #0dcaf0;
-      }
-      
-      body {
-        font-family: 'Poppins', sans-serif;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        background-color: #f8f9fa;
-      }
-      
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-      }
-      
-      .navbar-brand {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-      }
-      
-      .content {
-        flex: 1;
-      }
-      
-      footer {
-        margin-top: auto;
-        padding: 2rem 0;
-        background-color: var(--dark-color);
-        color: white;
-      }
-      
-      .card {
-        transition: transform 0.3s, box-shadow 0.3s;
-        overflow: hidden;
-        height: 100%;
-      }
-      
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-      
-      .media-card .card-img-top {
-        height: 250px;
-        object-fit: cover;
-      }
-      
-      .badge-genre {
-        background-color: var(--primary-color);
-        color: white;
-        margin-right: 5px;
-        margin-bottom: 5px;
-      }
-      
-      .hero-section {
-        background-color: var(--dark-color);
-        color: white;
-        padding: 3rem 0;
-        margin-bottom: 2rem;
-      }
-      
-      .section-title {
-        position: relative;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-      }
-      
-      .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background-color: var(--primary-color);
-      }
-      
-      /* Auth Forms */
-      .auth-form {
-        max-width: 500px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: white;
-        border-radius: 5px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      
-      /* Rating Stars */
-      .rating {
-        color: var(--warning-color);
-      }
-      
-      /* Custom button styles */
-      .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-      }
-      
-      .btn-outline-primary {
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-      }
-      
-      .btn-outline-primary:hover {
-        background-color: var(--primary-color);
-        color: white;
-      }
-      
-      /* Custom alert styles */
-      .alert {
-        border-radius: 3px;
-        border-left-width: 4px;
-      }
-      
-      /* Media Item Details */
-      .media-poster {
-        max-height: 400px;
-        object-fit: contain;
-      }
-      
-      .rating-value {
-        font-size: 3rem;
-        font-weight: bold;
-      }
-      
-      /* Watchlist icon */
-      .watchlist-icon {
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
-      
-      .watchlist-icon.active {
-        color: var(--danger-color);
-      }
-      
-      /* Header banner */
-      .header-banner {
-        height: 450px;
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        position: relative;
-      }
-      
-      .header-banner::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
-      }
-      
-      .header-content {
-        position: relative;
-        z-index: 1;
-        color: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding-bottom: 2rem;
-      }
-      
-      /* Sticky navbar on scroll */
-      .navbar.sticky-top {
-        transition: all 0.3s;
-      }
-      
-      .navbar.sticky-top.scrolled {
-        background-color: rgba(33, 37, 41, 0.95) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .media-card .card-img-top {
-          height: 200px;
-        }
-      
-        .header-banner {
-          height: 350px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'movies/css/movies.css' %}">
 
     {% block extra_css %}
 
@@ -233,97 +26,176 @@
   </head>
   <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg sticky-top">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'website:home' %}"><i class="bi bi-film"></i> MovieHub</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'website:home' %}">
+          <div class="brand-icon me-2">
+            <i class="bi bi-film fs-4"></i>
+          </div>
+          <span>MovieHub</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'website' %}active{% endif %}" aria-current="page" href="{% url 'website:home' %}">Home</a>
+              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'website' %}active fw-bold{% endif %}" href="{% url 'website:home' %}">
+                <i class="bi bi-house-door me-1"></i>Home
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'movies' %}active{% endif %}" href="{% url 'movies:home' %}">Movies</a>
+              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'movies' %}active fw-bold{% endif %}" href="{% url 'movies:home' %}">
+                <i class="bi bi-film me-1"></i>Movies
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'media_list' %}active{% endif %}" href="{% url 'movies:media_list' %}">Browse</a>
+              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'media_list' %}active fw-bold{% endif %}" href="{% url 'movies:media_list' %}">
+                <i class="bi bi-grid me-1"></i>Browse
+              </a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-tags me-1"></i>Categories
+              </a>
+              <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="navbarDropdown">
                 <li>
-                  <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Movie">Movies</a>
+                  <a class="dropdown-item py-2" href="{% url 'movies:media_list' %}?type=Movie">
+                    <i class="bi bi-camera-reels me-2"></i>Movies
+                  </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Series">TV Series</a>
+                  <a class="dropdown-item py-2" href="{% url 'movies:media_list' %}?type=Series">
+                    <i class="bi bi-tv me-2"></i>TV Series
+                  </a>
                 </li>
                 <li>
                   <hr class="dropdown-divider" />
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'movies:genre_list' %}">All Genres</a>
+                  <a class="dropdown-item py-2" href="{% url 'movies:genre_list' %}">
+                    <i class="bi bi-collection me-2"></i>All Genres
+                  </a>
                 </li>
               </ul>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">About Us</a>
-              <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+              <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-info-circle me-1"></i>About Us
+              </a>
+              <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="aboutDropdown">
                 <li>
-                  <a class="dropdown-item" href="{% url 'website:about' %}">About MovieHub</a>
+                  <a class="dropdown-item py-2" href="{% url 'website:about' %}">
+                    <i class="bi bi-building me-2"></i>About MovieHub
+                  </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'website:contact' %}">Contact Us</a>
+                  <a class="dropdown-item py-2" href="{% url 'website:contact' %}">
+                    <i class="bi bi-envelope me-2"></i>Contact Us
+                  </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'website:faq' %}">FAQ</a>
+                  <a class="dropdown-item py-2" href="{% url 'website:faq' %}">
+                    <i class="bi bi-question-circle me-2"></i>FAQ
+                  </a>
                 </li>
               </ul>
             </li>
             {% if user.is_authenticated %}
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Upload</a>
-                <ul class="dropdown-menu" aria-labelledby="uploadDropdown">
+                <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-cloud-upload me-1"></i>Upload
+                </a>
+                <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="uploadDropdown">
                   <li>
-                    <a class="dropdown-item" href="{% url 'movies:movie_create' %}">Upload Movie</a>
+                    <a class="dropdown-item py-2" href="{% url 'movies:movie_create' %}">
+                      <i class="bi bi-camera-reels me-2"></i>Upload Movie
+                    </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'movies:series_create' %}">Upload Series</a>
+                    <a class="dropdown-item py-2" href="{% url 'movies:series_create' %}">
+                      <i class="bi bi-tv me-2"></i>Upload Series
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="{% url 'movies:video_create' %}">
+                      <i class="bi bi-play-circle me-2"></i>Upload Video
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="{% url 'movies:shortvideo_create' %}">
+                      <i class="bi bi-play-circle-fill me-2"></i>Upload Short Video
+                    </a>
                   </li>
                 </ul>
               </li>
             {% endif %}
           </ul>
-          <form class="d-flex me-2" action="{% url 'movies:search' %}" method="get">
-            <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" />
-            <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+          <form class="d-flex me-3" action="{% url 'movies:search' %}" method="get">
+            <div class="input-group">
+              <input class="form-control border-end-0" type="search" name="q" placeholder="Search movies, series..." aria-label="Search" />
+              <button class="btn btn-outline-secondary border-start-0" type="submit">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
           </form>
-          <div class="d-flex">
+          <div class="d-flex align-items-center">
             {% if user.is_authenticated %}
               <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle me-1"></i> {{ user.email }}</button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="user-avatar-sm me-2">
+                    <i class="bi bi-person-circle"></i>
+                  </div>
+                  <span class="d-none d-md-inline">{{ user.email|truncatechars:15 }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" aria-labelledby="userDropdown">
                   <li>
-                    <a class="dropdown-item" href="{% url 'movies:watchlist' %}"><i class="bi bi-bookmark-heart me-1"></i> My Watchlist</a>
+                    <a class="dropdown-item py-2" href="{% url 'accounts:dashboard' %}">
+                      <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                    </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#"><i class="bi bi-person me-1"></i> Profile</a>
+                    <a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
+                      <i class="bi bi-person me-2"></i>Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="{% url 'accounts:plan' %}">
+                      <i class="bi bi-star me-2"></i>My Plan
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="{% url 'movies:watchlist' %}">
+                      <i class="bi bi-bookmark-heart me-2"></i>My Watchlist
+                    </a>
                   </li>
                   {% if user.is_staff %}
                     <li>
-                      <a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear me-1"></i> Admin</a>
+                      <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a class="dropdown-item py-2" href="{% url 'admin:index' %}">
+                        <i class="bi bi-gear me-2"></i>Admin
+                      </a>
                     </li>
                   {% endif %}
                   <li>
                     <hr class="dropdown-divider" />
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+                    <a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}">
+                      <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </a>
                   </li>
                 </ul>
               </div>
             {% else %}
-              <a href="#" class="btn btn-outline-light me-2">Login</a>
-              <a href="#" class="btn btn-primary">Sign Up</a>
+              <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary me-2 px-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+              </a>
+              <a href="{% url 'accounts:signup' %}" class="btn btn-primary px-3">
+                <i class="bi bi-person-plus me-1"></i>Sign Up
+              </a>
             {% endif %}
           </div>
         </div>
@@ -408,7 +280,13 @@
             <ul class="list-unstyled">
               {% if user.is_authenticated %}
                 <li class="mb-2">
-                  <a href="#" class="text-light text-decoration-none">My Profile</a>
+                  <a href="{% url 'accounts:dashboard' %}" class="text-light text-decoration-none">Dashboard</a>
+                </li>
+                <li class="mb-2">
+                  <a href="{% url 'accounts:profile' %}" class="text-light text-decoration-none">My Profile</a>
+                </li>
+                <li class="mb-2">
+                  <a href="{% url 'accounts:plan' %}" class="text-light text-decoration-none">My Plan</a>
                 </li>
                 <li class="mb-2">
                   <a href="{% url 'movies:watchlist' %}" class="text-light text-decoration-none">Watchlist</a>
@@ -418,10 +296,10 @@
                 </li>
               {% else %}
                 <li class="mb-2">
-                  <a href="#" class="text-light text-decoration-none">Login</a>
+                  <a href="{% url 'accounts:login' %}" class="text-light text-decoration-none">Login</a>
                 </li>
                 <li class="mb-2">
-                  <a href="#" class="text-light text-decoration-none">Sign Up</a>
+                  <a href="{% url 'accounts:signup' %}" class="text-light text-decoration-none">Sign Up</a>
                 </li>
               {% endif %}
             </ul>
@@ -452,21 +330,8 @@
     <!-- Bootstrap 5.3 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
-    <!-- Custom Script for sticky navbar -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const navbar = document.querySelector('.navbar.sticky-top')
-        if (navbar) {
-          window.addEventListener('scroll', function () {
-            if (window.scrollY > 50) {
-              navbar.classList.add('scrolled')
-            } else {
-              navbar.classList.remove('scrolled')
-            }
-          })
-        }
-      })
-    </script>
+    <!-- Custom JavaScript -->
+    <script src="{% static 'movies/js/movies.js' %}"></script>
 
     {% block extra_js %}
 

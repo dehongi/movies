@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Movie{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Create New Movie</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Media Fields -->
+                        <h4 class="mb-3">Basic Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.title.label_tag }}
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.release_year.label_tag }}
+                                {{ form.release_year }}
+                                {% if form.release_year.errors %}
+                                    <div class="text-danger">{{ form.release_year.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.poster.label_tag }}
+                                {{ form.poster }}
+                                {% if form.poster.errors %}
+                                    <div class="text-danger">{{ form.poster.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.trailer_url.label_tag }}
+                                {{ form.trailer_url }}
+                                {% if form.trailer_url.errors %}
+                                    <div class="text-danger">{{ form.trailer_url.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.genres.label_tag }}
+                                {{ form.genres }}
+                                {% if form.genres.errors %}
+                                    <div class="text-danger">{{ form.genres.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.privacy.label_tag }}
+                                {{ form.privacy }}
+                                {% if form.privacy.errors %}
+                                    <div class="text-danger">{{ form.privacy.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.is_featured }}
+                            {{ form.is_featured.label_tag }}
+                        </div>
+
+                        <!-- Movie Fields -->
+                        <h4 class="mb-3">Movie Details</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.duration.label_tag }}
+                                {{ form.duration }}
+                                {% if form.duration.errors %}
+                                    <div class="text-danger">{{ form.duration.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.director.label_tag }}
+                                {{ form.director }}
+                                {% if form.director.errors %}
+                                    <div class="text-danger">{{ form.director.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.cast.label_tag }}
+                            {{ form.cast }}
+                            {% if form.cast.errors %}
+                                <div class="text-danger">{{ form.cast.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Movie</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 User = settings.AUTH_USER_MODEL
 
@@ -36,6 +37,12 @@ class MediaType(models.Model):
 class Media(models.Model):
     """Base model for all media content"""
 
+    PRIVACY_CHOICES = [
+        ("public", "Public"),
+        ("unlisted", "Unlisted"),
+        ("private", "Private"),
+    ]
+
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=275, unique=True, blank=True)
     description = models.TextField()
@@ -56,6 +63,13 @@ class Media(models.Model):
 
     is_featured = models.BooleanField(default=False)
     views_count = models.PositiveIntegerField(default=0)
+
+    # New fields for privacy and copyright
+    privacy = models.CharField(max_length=10, choices=PRIVACY_CHOICES, default="public")
+    copyright_flagged = models.BooleanField(default=False)
+    used_space = models.PositiveIntegerField(
+        default=0, help_text="Space used by this media in MB"
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -127,9 +141,18 @@ class Episode(models.Model):
     release_date = models.DateField()
     video_file = models.FileField(upload_to="episodes/", blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
+    file_size = models.PositiveIntegerField(
+        help_text="File size in MB", blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.season.series.media.title} S{self.season.season_number}E{self.episode_number}: {self.title}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.file_size:
+            self.season.series.media.used_space += self.file_size
+            self.season.series.media.save()
 
     class Meta:
         ordering = ["episode_number"]
@@ -151,6 +174,83 @@ class VideoFile(models.Model):
 
     def __str__(self):
         return f"{self.movie.media.title} - {self.quality}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.file_size:
+            self.movie.media.used_space += self.file_size
+            self.movie.media.save()
+
+
+class Platform(models.Model):
+    """Platform model for automatic uploads"""
+
+    name = models.CharField(max_length=100, unique=True)
+    api_endpoint = models.URLField(blank=True, null=True)
+    api_key = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class MediaPlatform(models.Model):
+    """Link media to platforms for auto-upload"""
+
+    media = models.ForeignKey(Media, on_delete=models.CASCADE, related_name="platforms")
+    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
+    uploaded = models.BooleanField(default=False)
+    upload_url = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.media.title} on {self.platform.name}"
+
+
+class Podcast(models.Model):
+    """Podcast-specific model"""
+
+    media = models.OneToOneField(
+        Media,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="podcast_details",
+    )
+    host = models.CharField(max_length=255)
+    episode_count = models.PositiveIntegerField(default=1)
+    is_ongoing = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Podcast: {self.media.title}"
+
+
+class Video(models.Model):
+    """Video-specific model for normal videos"""
+
+    media = models.OneToOneField(
+        Media, on_delete=models.CASCADE, primary_key=True, related_name="video_details"
+    )
+    duration = models.PositiveIntegerField(help_text="Duration in seconds")
+
+    def __str__(self):
+        return f"Video: {self.media.title}"
+
+
+class ShortVideo(models.Model):
+    """Short video-specific model"""
+
+    media = models.OneToOneField(
+        Media,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="short_video_details",
+    )
+    duration = models.PositiveIntegerField(help_text="Duration in seconds, max 60")
+
+    def __str__(self):
+        return f"Short Video: {self.media.title}"
+
+    def clean(self):
+        if self.duration > 60:
+            raise ValidationError("Short videos must be 60 seconds or less.")
 
 
 class Review(models.Model):

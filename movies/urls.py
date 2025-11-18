@@ -52,9 +52,9 @@ urlpatterns = [
         name="media_delete",
     ),
     # Movie URLs
-    path("movies/create/", views.MovieCreateView.as_view(), name="movie_create"),
+    path("create/", views.MovieCreateView.as_view(), name="movie_create"),
     path(
-        "movies/<slug:slug>/update/",
+        "<slug:slug>/update/",
         views.MovieUpdateView.as_view(),
         name="movie_update",
     ),
@@ -64,6 +64,16 @@ urlpatterns = [
         "series/<slug:slug>/update/",
         views.SeriesUpdateView.as_view(),
         name="series_update",
+    ),
+    # Podcast URLs
+    path("podcasts/create/", views.PodcastCreateView.as_view(), name="podcast_create"),
+    # Video URLs
+    path("videos/create/", views.VideoCreateView.as_view(), name="video_create"),
+    # ShortVideo URLs
+    path(
+        "shortvideos/create/",
+        views.ShortVideoCreateView.as_view(),
+        name="shortvideo_create",
     ),
     # Season URLs
     path(

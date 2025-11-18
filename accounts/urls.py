@@ -42,4 +42,7 @@ urlpatterns = [
     # Profile
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("profile/edit/", views.ProfileUpdateView.as_view(), name="profile_edit"),
+    # Dashboard and Plan
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
+    path("plan/", views.PlanView.as_view(), name="plan"),
 ]

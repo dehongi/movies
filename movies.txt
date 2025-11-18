@@ -1,0 +1,6 @@
+The ultimate goal of this project is to help video creators upload videos to this websitge and have option to have private, unlisted and public videos here. 
+Also the goal of this website is to help them to upload automatically to other major platforms for videos and podcasts.
+
+This website is not free for use though and users pay a monthly fee based on their total used space.
+All videos can be public and we don't sell adds on them but users can do it themselves.
+Videos that are flagged as copyright won't be deleted but set to private until dispute resolved.

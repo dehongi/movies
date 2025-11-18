@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
+from django.db.models import Q
 from django.views.generic import (
     ListView,
     DetailView,
@@ -28,6 +29,9 @@ from .models import (
     VideoFile,
     Review,
     Watchlist,
+    Platform,
+    MediaPlatform,
+    Podcast,
 )
 from .forms import (
     GenreForm,
@@ -45,6 +49,9 @@ from .forms import (
     EpisodeFormSet,
     MovieWithMediaForm,
     SeriesWithMediaForm,
+    PodcastWithMediaForm,
+    VideoWithMediaForm,
+    ShortVideoWithMediaForm,
 )
 
 
@@ -148,6 +155,14 @@ class MediaListView(ListView):
         if year:
             queryset = queryset.filter(release_year=year)
 
+        # Filter by privacy: only show public and unlisted, unless user is uploader
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(
+                Q(privacy__in=["public", "unlisted"]) | Q(uploader=self.request.user)
+            )
+        else:
+            queryset = queryset.filter(privacy__in=["public", "unlisted"])
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -188,7 +203,7 @@ class MediaDetailView(DetailView):
                 user=self.request.user, media=media
             ).exists()
 
-        # Check if it's a movie or series and add the appropriate details
+        # Check if it's a movie, series, or podcast and add the appropriate details
         try:
             context["movie"] = media.movie_details
             context["video_files"] = media.movie_details.video_files.all()
@@ -199,6 +214,11 @@ class MediaDetailView(DetailView):
             context["series"] = media.series_details
             context["seasons"] = media.series_details.seasons.all()
         except Series.DoesNotExist:
+            pass
+
+        try:
+            context["podcast"] = media.podcast_details
+        except Podcast.DoesNotExist:
             pass
 
         return context
@@ -253,13 +273,27 @@ class MovieCreateView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         with transaction.atomic():
+            # Extract metadata if poster file is provided
+            metadata = {}
+            if form.cleaned_data.get("poster"):
+                # Get the file path temporarily
+                temp_file_path = form.cleaned_data["poster"].temporary_file_path()
+                metadata = form.extract_metadata(temp_file_path)
+
             # Create Media object
             media_type, _ = MediaType.objects.get_or_create(name="Movie")
 
+            # Use extracted metadata if available, otherwise use form data
+            title = metadata.get("title") or form.cleaned_data["title"]
+            release_year = (
+                metadata.get("release_year") or form.cleaned_data["release_year"]
+            )
+            duration = metadata.get("duration") or form.cleaned_data["duration"]
+
             media = Media.objects.create(
-                title=form.cleaned_data["title"],
+                title=title,
                 description=form.cleaned_data["description"],
-                release_year=form.cleaned_data["release_year"],
+                release_year=release_year,
                 poster=(
                     form.cleaned_data["poster"]
                     if "poster" in form.cleaned_data
@@ -269,6 +303,7 @@ class MovieCreateView(LoginRequiredMixin, FormView):
                 media_type=media_type,
                 uploader=self.request.user,
                 is_featured=form.cleaned_data["is_featured"],
+                privacy=form.cleaned_data["privacy"],
             )
 
             # Add genres
@@ -277,7 +312,7 @@ class MovieCreateView(LoginRequiredMixin, FormView):
             # Create Movie object
             movie = Movie.objects.create(
                 media=media,
-                duration=form.cleaned_data["duration"],
+                duration=duration,
                 director=form.cleaned_data["director"],
                 cast=form.cleaned_data["cast"],
             )
@@ -377,6 +412,7 @@ class SeriesCreateView(LoginRequiredMixin, FormView):
                 media_type=media_type,
                 uploader=self.request.user,
                 is_featured=form.cleaned_data["is_featured"],
+                privacy=form.cleaned_data["privacy"],
             )
 
             # Add genres
@@ -391,6 +427,175 @@ class SeriesCreateView(LoginRequiredMixin, FormView):
 
             messages.success(
                 self.request, f'Series "{media.title}" has been created successfully!'
+            )
+            self.success_url = reverse(
+                "movies:media_detail", kwargs={"slug": media.slug}
+            )
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class PodcastCreateView(LoginRequiredMixin, FormView):
+    form_class = PodcastWithMediaForm
+    template_name = "movies/podcast_form.html"
+    success_url = reverse_lazy("movies:media_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Extract metadata if poster file is provided
+            metadata = {}
+            if form.cleaned_data.get("poster"):
+                # Get the file path temporarily
+                temp_file_path = form.cleaned_data["poster"].temporary_file_path()
+                metadata = form.extract_metadata(temp_file_path)
+
+            # Create Media object
+            media_type, _ = MediaType.objects.get_or_create(name="Podcast")
+
+            # Use extracted metadata if available, otherwise use form data
+            title = metadata.get("title") or form.cleaned_data["title"]
+            release_year = (
+                metadata.get("release_year") or form.cleaned_data["release_year"]
+            )
+
+            media = Media.objects.create(
+                title=title,
+                description=form.cleaned_data["description"],
+                release_year=release_year,
+                poster=(
+                    form.cleaned_data["poster"]
+                    if "poster" in form.cleaned_data
+                    else None
+                ),
+                trailer_url=form.cleaned_data["trailer_url"],
+                media_type=media_type,
+                uploader=self.request.user,
+                is_featured=form.cleaned_data["is_featured"],
+                privacy=form.cleaned_data["privacy"],
+            )
+
+            # Add genres
+            media.genres.set(form.cleaned_data["genres"])
+
+            # Create Podcast object
+            podcast = Podcast.objects.create(
+                media=media,
+                host=form.cleaned_data["host"],
+                episode_count=form.cleaned_data["episode_count"],
+                is_ongoing=form.cleaned_data["is_ongoing"],
+            )
+
+            messages.success(
+                self.request, f'Podcast "{media.title}" has been created successfully!'
+            )
+            self.success_url = reverse(
+                "movies:media_detail", kwargs={"slug": media.slug}
+            )
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class VideoCreateView(LoginRequiredMixin, FormView):
+    form_class = VideoWithMediaForm
+    template_name = "movies/video_form.html"
+    success_url = reverse_lazy("movies:media_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Create Media object
+            media_type, _ = MediaType.objects.get_or_create(name="Video")
+
+            media = Media.objects.create(
+                title=form.cleaned_data["title"],
+                description=form.cleaned_data["description"],
+                release_year=form.cleaned_data["release_year"],
+                poster=(
+                    form.cleaned_data["poster"]
+                    if "poster" in form.cleaned_data
+                    else None
+                ),
+                trailer_url=form.cleaned_data["trailer_url"],
+                media_type=media_type,
+                uploader=self.request.user,
+                is_featured=form.cleaned_data["is_featured"],
+                privacy=form.cleaned_data["privacy"],
+            )
+
+            # Add genres
+            media.genres.set(form.cleaned_data["genres"])
+
+            # Create Video object
+            video = Video.objects.create(
+                media=media,
+                duration=form.cleaned_data["duration"],
+            )
+
+            messages.success(
+                self.request, f'Video "{media.title}" has been created successfully!'
+            )
+            self.success_url = reverse(
+                "movies:media_detail", kwargs={"slug": media.slug}
+            )
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class ShortVideoCreateView(LoginRequiredMixin, FormView):
+    form_class = ShortVideoWithMediaForm
+    template_name = "movies/shortvideo_form.html"
+    success_url = reverse_lazy("movies:media_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Create Media object
+            media_type, _ = MediaType.objects.get_or_create(name="ShortVideo")
+
+            media = Media.objects.create(
+                title=form.cleaned_data["title"],
+                description=form.cleaned_data["description"],
+                release_year=form.cleaned_data["release_year"],
+                poster=(
+                    form.cleaned_data["poster"]
+                    if "poster" in form.cleaned_data
+                    else None
+                ),
+                trailer_url=form.cleaned_data["trailer_url"],
+                media_type=media_type,
+                uploader=self.request.user,
+                is_featured=form.cleaned_data["is_featured"],
+                privacy=form.cleaned_data["privacy"],
+            )
+
+            # Add genres
+            media.genres.set(form.cleaned_data["genres"])
+
+            # Create ShortVideo object
+            shortvideo = ShortVideo.objects.create(
+                media=media,
+                duration=form.cleaned_data["duration"],
+            )
+
+            messages.success(
+                self.request,
+                f'Short video "{media.title}" has been created successfully!',
             )
             self.success_url = reverse(
                 "movies:media_detail", kwargs={"slug": media.slug}
@@ -795,19 +1000,41 @@ class HomeView(ListView):
     context_object_name = "featured_media"
 
     def get_queryset(self):
-        return Media.objects.filter(is_featured=True)[:8]
+        queryset = Media.objects.filter(is_featured=True)
+        # Filter by privacy
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(
+                Q(privacy__in=["public", "unlisted"]) | Q(uploader=self.request.user)
+            )
+        else:
+            queryset = queryset.filter(privacy__in=["public", "unlisted"])
+        return queryset[:8]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["latest_movies"] = Media.objects.filter(
-            media_type__name="Movie"
+
+        # Base queryset with privacy filter
+        base_qs = Media.objects.all()
+        if self.request.user.is_authenticated:
+            base_qs = base_qs.filter(
+                Q(privacy__in=["public", "unlisted"]) | Q(uploader=self.request.user)
+            )
+        else:
+            base_qs = base_qs.filter(privacy__in=["public", "unlisted"])
+
+        context["latest_movies"] = base_qs.filter(media_type__name="Movie").order_by(
+            "-created_at"
+        )[:6]
+
+        context["latest_series"] = base_qs.filter(media_type__name="Series").order_by(
+            "-created_at"
+        )[:6]
+
+        context["latest_podcasts"] = base_qs.filter(
+            media_type__name="Podcast"
         ).order_by("-created_at")[:6]
 
-        context["latest_series"] = Media.objects.filter(
-            media_type__name="Series"
-        ).order_by("-created_at")[:6]
-
-        context["popular_media"] = Media.objects.order_by("-views_count")[:6]
+        context["popular_media"] = base_qs.order_by("-views_count")[:6]
 
         # Add genres to the context
         context["genres"] = Genre.objects.all()
@@ -825,5 +1052,14 @@ class SearchView(ListView):
     def get_queryset(self):
         query = self.request.GET.get("q", "")
         if query:
-            return Media.objects.filter(title__icontains=query)
+            queryset = Media.objects.filter(title__icontains=query)
+            # Filter by privacy
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(
+                    Q(privacy__in=["public", "unlisted"])
+                    | Q(uploader=self.request.user)
+                )
+            else:
+                queryset = queryset.filter(privacy__in=["public", "unlisted"])
+            return queryset
         return Media.objects.none()
