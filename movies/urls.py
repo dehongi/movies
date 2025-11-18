@@ -75,6 +75,28 @@ urlpatterns = [
         views.ShortVideoCreateView.as_view(),
         name="shortvideo_create",
     ),
+    # SimpleVideo URLs
+    path("simplevideos/", views.SimpleVideoListView.as_view(), name="simplevideo_list"),
+    path(
+        "simplevideos/<int:pk>/",
+        views.SimpleVideoDetailView.as_view(),
+        name="simplevideo_detail",
+    ),
+    path(
+        "simplevideos/create/",
+        views.SimpleVideoCreateView.as_view(),
+        name="simplevideo_create",
+    ),
+    path(
+        "simplevideos/<int:pk>/update/",
+        views.SimpleVideoUpdateView.as_view(),
+        name="simplevideo_update",
+    ),
+    path(
+        "simplevideos/<int:pk>/delete/",
+        views.SimpleVideoDeleteView.as_view(),
+        name="simplevideo_delete",
+    ),
     # Season URLs
     path(
         "series/<slug:series_slug>/seasons/<int:season_number>/",

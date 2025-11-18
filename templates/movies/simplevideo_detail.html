@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ simple_video.title }} - MovieHub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <!-- Video Player Section -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-0">
+          <!-- Video Player -->
+          <div class="video-player-container">
+            <video controls class="w-100" style="max-height: 500px;" poster="{% if simple_video.thumbnail %}{{ simple_video.thumbnail.url }}{% endif %}">
+              <source src="{{ simple_video.video_file.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          <!-- Video Info -->
+          <div class="p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h1 class="h3 mb-2">{{ simple_video.title }}</h1>
+                <p class="text-muted mb-0">
+                  <i class="bi bi-calendar me-1"></i>Uploaded {{ simple_video.upload_date|date:"F j, Y" }}
+                  {% if simple_video.duration %}
+                    <span class="ms-3">
+                      <i class="bi bi-clock me-1"></i>{{ simple_video.duration|floatformat:0 }} seconds
+                    </span>
+                  {% endif %}
+                </p>
+              </div>
+              <div class="btn-group" role="group">
+                <a href="{% url 'movies:simplevideo_update' simple_video.pk %}" class="btn btn-outline-primary">
+                  <i class="bi bi-pencil me-1"></i>Edit
+                </a>
+                <a href="{% url 'movies:simplevideo_delete' simple_video.pk %}" class="btn btn-outline-danger">
+                  <i class="bi bi-trash me-1"></i>Delete
+                </a>
+              </div>
+            </div>
+
+            {% if simple_video.description %}
+              <div class="mb-4">
+                <h5 class="mb-3">Description</h5>
+                <p class="mb-0">{{ simple_video.description }}</p>
+              </div>
+            {% endif %}
+
+            <!-- Video Details -->
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-muted mb-2">File Information</h6>
+                <ul class="list-unstyled small">
+                  <li class="mb-1">
+                    <strong>Filename:</strong> {{ simple_video.video_file.name|slice:"-50:" }}
+                  </li>
+                  <li class="mb-1">
+                    <strong>Size:</strong> {{ simple_video.video_file.size|filesizeformat }}
+                  </li>
+                  <li class="mb-1">
+                    <strong>Type:</strong> {{ simple_video.video_file.name|slice:"-3:"|upper }}
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-muted mb-2">Uploader</h6>
+                <div class="d-flex align-items-center">
+                  <div class="user-avatar-sm me-2">
+                    <i class="bi bi-person-circle"></i>
+                  </div>
+                  <div>
+                    <p class="mb-0 small">{{ simple_video.uploader.email }}</p>
+                    <p class="text-muted mb-0 small">Member since {{ simple_video.uploader.date_joined|date:"M Y" }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Quick Actions -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-gear me-2"></i>Quick Actions
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <a href="{{ simple_video.video_file.url }}" class="btn btn-outline-primary" download>
+              <i class="bi bi-download me-1"></i>Download Video
+            </a>
+            <button class="btn btn-outline-secondary" onclick="copyVideoUrl()">
+              <i class="bi bi-clipboard me-1"></i>Copy Video URL
+            </button>
+            <button class="btn btn-outline-info" onclick="shareVideo()">
+              <i class="bi bi-share me-1"></i>Share Video
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Stats -->
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-bar-chart me-2"></i>Video Stats
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-6">
+              <div class="stat-number">{{ simple_video.duration|floatformat:0|default:0 }}</div>
+              <div class="stat-label small text-muted">Duration (sec)</div>
+            </div>
+            <div class="col-6">
+              <div class="stat-number">{{ simple_video.video_file.size|filesizeformat }}</div>
+              <div class="stat-label small text-muted">File Size</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <a href="{% url 'movies:simplevideo_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Back to All Videos
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.video-player-container {
+  background: #000;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.stat-label {
+  margin-top: 0.25rem;
+}
+</style>
+
+{% block extra_js %}
+<script>
+function copyVideoUrl() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(function() {
+    // Show success message
+    showToast('Video URL copied to clipboard!', 'success');
+  }, function(err) {
+    console.error('Could not copy text: ', err);
+    showToast('Failed to copy URL', 'error');
+  });
+}
+
+function shareVideo() {
+  if (navigator.share) {
+    navigator.share({
+      title: '{{ simple_video.title }}',
+      text: 'Check out this video: {{ simple_video.title }}',
+      url: window.location.href,
+    });
+  } else {
+    copyVideoUrl();
+  }
+}
+
+function showToast(message, type) {
+  // Simple toast implementation
+  const toast = document.createElement('div');
+  toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+  toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+  toast.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.body.appendChild(toast);
+
+  // Auto remove after 3 seconds
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -265,6 +265,84 @@ class ShortVideo(models.Model):
             raise ValidationError("Short videos must be 60 seconds or less.")
 
 
+class SimpleVideo(models.Model):
+    """Simplified video model for basic uploads with metadata extraction"""
+
+    uploader = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="simple_videos"
+    )
+    video_file = models.FileField(upload_to="simple_videos/")
+    title = models.CharField(
+        max_length=255, blank=True, help_text="Extracted from file or user input"
+    )
+    thumbnail = models.ImageField(
+        upload_to="simple_video_thumbnails/",
+        blank=True,
+        null=True,
+        help_text="Extracted thumbnail",
+    )
+    duration = models.PositiveIntegerField(
+        help_text="Duration in seconds, extracted from file", blank=True, null=True
+    )
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Simple Video: {self.title or self.video_file.name}"
+
+    def save(self, *args, **kwargs):
+        # Extract metadata if not provided
+        if not self.title or not self.duration:
+            self.extract_metadata()
+        super().save(*args, **kwargs)
+
+    def extract_metadata(self):
+        """Extract metadata from the video file using moviepy or similar"""
+        try:
+            from moviepy.editor import VideoFileClip
+            import os
+            from PIL import Image
+            import uuid
+
+            if not self.video_file:
+                return
+
+            file_path = self.video_file.path
+
+            # Extract duration
+            clip = VideoFileClip(file_path)
+            self.duration = int(clip.duration)
+
+            # Extract title from filename if not provided
+            if not self.title:
+                filename = os.path.basename(self.video_file.name)
+                self.title = os.path.splitext(filename)[0]
+
+            # Extract thumbnail (first frame)
+            thumbnail_filename = f"simple_video_thumb_{uuid.uuid4().hex[:8]}.jpg"
+            thumbnail_path = os.path.join(
+                "media", "simple_video_thumbnails", thumbnail_filename
+            )
+
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
+
+            # Get first frame and save as thumbnail
+            frame = clip.get_frame(0)
+            img = Image.fromarray(frame)
+            img.thumbnail((320, 180))  # Resize to reasonable thumbnail size
+            img.save(thumbnail_path, "JPEG", quality=85)
+
+            # Save thumbnail path to model
+            self.thumbnail = f"simple_video_thumbnails/{thumbnail_filename}"
+
+            clip.close()
+
+        except Exception as e:
+            print(f"Error extracting metadata: {e}")
+            # Fallback: just set duration to None if extraction fails
+            self.duration = None
+
+
 class Review(models.Model):
     """User reviews for media content"""
 

@@ -34,6 +34,7 @@ from .models import (
     Podcast,
     ShortVideo,
     Video,
+    SimpleVideo,
 )
 from .forms import (
     GenreForm,
@@ -54,6 +55,7 @@ from .forms import (
     PodcastWithMediaForm,
     VideoWithMediaForm,
     ShortVideoWithMediaForm,
+    SimpleVideoForm,
 )
 
 
@@ -1065,3 +1067,66 @@ class SearchView(ListView):
                 queryset = queryset.filter(privacy__in=["public", "unlisted"])
             return queryset
         return Media.objects.none()
+
+
+# SimpleVideo Views
+class SimpleVideoListView(ListView):
+    model = SimpleVideo
+    template_name = "movies/simplevideo_list.html"
+    context_object_name = "simple_videos"
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Filter by user if needed, but for now show all
+        return queryset.order_by("-upload_date")
+
+
+class SimpleVideoDetailView(DetailView):
+    model = SimpleVideo
+    template_name = "movies/simplevideo_detail.html"
+    context_object_name = "simple_video"
+
+
+@method_decorator(login_required, name="dispatch")
+class SimpleVideoCreateView(LoginRequiredMixin, CreateView):
+    model = SimpleVideo
+    form_class = SimpleVideoForm
+    template_name = "movies/simplevideo_form.html"
+    success_url = reverse_lazy("movies:simplevideo_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            f'Simple video "{form.instance.title or form.instance.video_file.name}" has been uploaded successfully!',
+        )
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class SimpleVideoUpdateView(LoginRequiredMixin, UpdateView):
+    model = SimpleVideo
+    form_class = SimpleVideoForm
+    template_name = "movies/simplevideo_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("movies:simplevideo_detail", kwargs={"pk": self.object.pk})
+
+
+@method_decorator(login_required, name="dispatch")
+class SimpleVideoDeleteView(LoginRequiredMixin, DeleteView):
+    model = SimpleVideo
+    template_name = "movies/simplevideo_confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy("movies:simplevideo_list")

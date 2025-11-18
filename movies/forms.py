@@ -16,6 +16,7 @@ from .models import (
     Podcast,
     Video,
     ShortVideo,
+    SimpleVideo,
 )
 import mutagen
 from mutagen.mp3 import MP3
@@ -520,3 +521,33 @@ class ShortVideoWithMediaForm(forms.Form):
         if duration and duration > 60:
             raise forms.ValidationError("Short videos must be 60 seconds or less.")
         return duration
+
+
+class SimpleVideoForm(forms.ModelForm):
+    class Meta:
+        model = SimpleVideo
+        fields = ["video_file", "title"]
+        widgets = {
+            "video_file": forms.FileInput(attrs={"class": "form-control"}),
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Leave blank to extract from file",
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.user:
+            instance.uploader = self.user
+        if commit:
+            instance.save()
+            # Extract metadata after saving the file
+            instance.extract_metadata()
+            instance.save()  # Save again with extracted metadata
+        return instance

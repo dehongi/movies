@@ -10,6 +10,7 @@ from .models import (
     VideoFile,
     Review,
     Watchlist,
+    SimpleVideo,
 )
 
 
@@ -81,6 +82,14 @@ class WatchlistAdmin(admin.ModelAdmin):
     date_hierarchy = "added_at"
 
 
+class SimpleVideoAdmin(admin.ModelAdmin):
+    list_display = ("title", "uploader", "duration", "upload_date")
+    list_filter = ("upload_date",)
+    search_fields = ("title", "uploader__email")
+    date_hierarchy = "upload_date"
+    readonly_fields = ("duration", "thumbnail")
+
+
 class MediaAdmin(admin.ModelAdmin):
     list_display = (
         "title",
@@ -129,3 +138,4 @@ admin.site.register(Episode, EpisodeAdmin)
 admin.site.register(VideoFile)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Watchlist, WatchlistAdmin)
+admin.site.register(SimpleVideo, SimpleVideoAdmin)
