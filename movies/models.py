@@ -231,67 +231,32 @@ class Podcast(models.Model):
 
 
 class Video(models.Model):
-    """Video-specific model for normal videos"""
-
-    media = models.OneToOneField(
-        Media, on_delete=models.CASCADE, primary_key=True, related_name="video_details"
-    )
-    duration = models.PositiveIntegerField(
-        help_text="Duration in seconds", blank=True, null=True
-    )
-
-    def __str__(self):
-        return f"Video: {self.media.title}"
-
-
-class ShortVideo(models.Model):
-    """Short video-specific model"""
-
-    media = models.OneToOneField(
-        Media,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="short_video_details",
-    )
-    duration = models.PositiveIntegerField(
-        help_text="Duration in seconds, max 60", blank=True, null=True
-    )
-
-    def __str__(self):
-        return f"Short Video: {self.media.title}"
-
-    def clean(self):
-        if self.duration > 60:
-            raise ValidationError("Short videos must be 60 seconds or less.")
-
-
-class SimpleVideo(models.Model):
-    """Simplified video model for basic uploads with metadata extraction"""
+    """Video-specific model for standalone videos"""
 
     uploader = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="simple_videos"
+        User, on_delete=models.CASCADE, related_name="videos"
     )
-    video_file = models.FileField(upload_to="simple_videos/")
     title = models.CharField(
         max_length=255, blank=True, help_text="Extracted from file or user input"
     )
+    video_file = models.FileField(upload_to="videos/")
     thumbnail = models.ImageField(
-        upload_to="simple_video_thumbnails/",
+        upload_to="video_thumbnails/",
         blank=True,
         null=True,
         help_text="Extracted thumbnail",
     )
     duration = models.PositiveIntegerField(
-        help_text="Duration in seconds, extracted from file", blank=True, null=True
+        help_text="Duration in seconds", blank=True, null=True
     )
-    upload_date = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Simple Video: {self.title or self.video_file.name}"
+        return f"Video: {self.title or self.video_file.name}"
 
     def save(self, *args, **kwargs):
         # Extract metadata if not provided
-        if not self.title or not self.duration:
+        if self.video_file and (not self.title or not self.duration):
             self.extract_metadata()
         super().save(*args, **kwargs)
 
@@ -318,9 +283,9 @@ class SimpleVideo(models.Model):
                 self.title = os.path.splitext(filename)[0]
 
             # Extract thumbnail (first frame)
-            thumbnail_filename = f"simple_video_thumb_{uuid.uuid4().hex[:8]}.jpg"
+            thumbnail_filename = f"video_thumb_{uuid.uuid4().hex[:8]}.jpg"
             thumbnail_path = os.path.join(
-                "media", "simple_video_thumbnails", thumbnail_filename
+                "media", "video_thumbnails", thumbnail_filename
             )
 
             # Ensure directory exists
@@ -333,14 +298,117 @@ class SimpleVideo(models.Model):
             img.save(thumbnail_path, "JPEG", quality=85)
 
             # Save thumbnail path to model
-            self.thumbnail = f"simple_video_thumbnails/{thumbnail_filename}"
+            self.thumbnail = f"video_thumbnails/{thumbnail_filename}"
 
             clip.close()
 
         except Exception as e:
             print(f"Error extracting metadata: {e}")
-            # Fallback: just set duration to None if extraction fails
-            self.duration = None
+
+
+
+class ShortVideo(models.Model):
+    """Short video-specific model for vertical videos up to 3 minutes"""
+
+    uploader = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="short_videos"
+    )
+    title = models.CharField(
+        max_length=255, blank=True, help_text="Extracted from file or user input"
+    )
+    video_file = models.FileField(upload_to="short_videos/")
+    thumbnail = models.ImageField(
+        upload_to="short_video_thumbnails/",
+        blank=True,
+        null=True,
+        help_text="Extracted thumbnail",
+    )
+    duration = models.PositiveIntegerField(
+        help_text="Duration in seconds, max 180 (3 minutes)", blank=True, null=True
+    )
+    width = models.PositiveIntegerField(blank=True, null=True, help_text="Video width in pixels")
+    height = models.PositiveIntegerField(blank=True, null=True, help_text="Video height in pixels")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Short Video: {self.title or self.video_file.name}"
+
+    def save(self, *args, **kwargs):
+        # Extract metadata if not provided
+        if self.video_file and (not self.title or not self.duration):
+            self.extract_metadata()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        super().clean()
+        if self.duration and self.duration > 180:
+            raise ValidationError("Short videos must be 180 seconds (3 minutes) or less.")
+        
+        # Validate vertical aspect ratio (height should be greater than width)
+        if self.width and self.height and self.height <= self.width:
+            raise ValidationError("Short videos must have vertical orientation (height > width).")
+
+    def extract_metadata(self):
+        """Extract metadata from the video file and validate constraints"""
+        try:
+            from moviepy.editor import VideoFileClip
+            import os
+            from PIL import Image
+            import uuid
+
+            if not self.video_file:
+                return
+
+            file_path = self.video_file.path
+
+            # Extract video info
+            clip = VideoFileClip(file_path)
+            self.duration = int(clip.duration)
+            self.width = clip.w
+            self.height = clip.h
+
+            # Validate duration (max 3 minutes)
+            if self.duration > 180:
+                clip.close()
+                raise ValidationError("Video duration exceeds 3 minutes (180 seconds).")
+
+            # Validate vertical orientation
+            if self.height <= self.width:
+                clip.close()
+                raise ValidationError("Video must be in vertical/portrait orientation (height > width).")
+
+            # Extract title from filename if not provided
+            if not self.title:
+                filename = os.path.basename(self.video_file.name)
+                self.title = os.path.splitext(filename)[0]
+
+            # Extract thumbnail (first frame)
+            thumbnail_filename = f"short_video_thumb_{uuid.uuid4().hex[:8]}.jpg"
+            thumbnail_path = os.path.join(
+                "media", "short_video_thumbnails", thumbnail_filename
+            )
+
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
+
+            # Get first frame and save as thumbnail
+            frame = clip.get_frame(0)
+            img = Image.fromarray(frame)
+            img.thumbnail((180, 320))  # Vertical thumbnail size
+            img.save(thumbnail_path, "JPEG", quality=85)
+
+            # Save thumbnail path to model
+            self.thumbnail = f"short_video_thumbnails/{thumbnail_filename}"
+
+            clip.close()
+
+        except ValidationError:
+            raise  # Re-raise validation errors
+        except Exception as e:
+            print(f"Error extracting metadata: {e}")
+
+
+
 
 
 class Review(models.Model):

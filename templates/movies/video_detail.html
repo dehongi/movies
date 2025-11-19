@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h1 class="h3 mb-3">{{ video.title }}</h1>
+
+                    {% if video.video_file %}
+                    <div class="ratio ratio-16x9 mb-3">
+                        <video controls class="w-100">
+                            <source src="{{ video.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-user me-1"></i>
+                                <strong>Uploader:</strong> {{ video.uploader.email }}
+                            </p>
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-calendar me-1"></i>
+                                <strong>Uploaded:</strong> {{ video.created_at|date:"F d, Y" }}
+                            </p>
+                            {% if video.duration %}
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-clock me-1"></i>
+                                <strong>Duration:</strong> {{ video.duration }} seconds
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        {% if user == video.uploader %}
+                        <div class="btn-group">
+                            <a href="{% url 'movies:video_update' video.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'movies:video_delete' video.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Video Info</h5>
+                </div>
+                <div class="card-body">
+                    {% if video.thumbnail %}
+                    <img src="{{ video.thumbnail.url }}" class="img-fluid rounded mb-3" alt="Thumbnail">
+                    {% endif %}
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">File:</dt>
+                        <dd class="col-sm-8 text-truncate">{{ video.video_file.name|slice:"7:" }}</dd>
+
+                        <dt class="col-sm-4">Size:</dt>
+                        <dd class="col-sm-8">{{ video.video_file.size|filesizeformat }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'movies:video_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Videos
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -16,7 +16,6 @@ from .models import (
     Podcast,
     Video,
     ShortVideo,
-    SimpleVideo,
 )
 import mutagen
 from mutagen.mp3 import MP3
@@ -449,137 +448,91 @@ class PodcastWithMediaForm(forms.Form):
         super().__init__(*args, **kwargs)
 
 
-class VideoWithMediaForm(forms.Form):
-    """Combined form for creating a Video with its Media parent"""
+class VideoForm(forms.ModelForm):
+    """Form for creating a standalone Video"""
 
-    # Media fields - poster first
-    poster = forms.ImageField(
-        required=False, widget=forms.FileInput(attrs={"class": "form-control"})
-    )
-    title = forms.CharField(
-        max_length=255, widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 6})
-    )
-    release_year = forms.IntegerField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "min": 1900, "max": 2100}
-        )
-    )
-    trailer_url = forms.URLField(
-        required=False, widget=forms.URLInput(attrs={"class": "form-control"})
-    )
-    genres = forms.ModelMultipleChoiceField(
-        queryset=Genre.objects.all(),
-        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
-    )
-    is_featured = forms.BooleanField(
-        required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
-    )
-    privacy = forms.ChoiceField(
-        choices=Media.PRIVACY_CHOICES,
-        initial="public",
-        widget=forms.Select(attrs={"class": "form-select"}),
-    )
-
-    # Video fields
-    duration = forms.IntegerField(
-        help_text="Duration in seconds",
-        widget=forms.NumberInput(attrs={"class": "form-control", "min": 1}),
-    )
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
-
-
-class ShortVideoWithMediaForm(forms.Form):
-    """Combined form for creating a ShortVideo with its Media parent"""
-
-    # Media fields - poster first
-    poster = forms.ImageField(
-        required=False, widget=forms.FileInput(attrs={"class": "form-control"})
-    )
-    title = forms.CharField(
-        max_length=255, widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 6})
-    )
-    release_year = forms.IntegerField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "min": 1900, "max": 2100}
-        )
-    )
-    trailer_url = forms.URLField(
-        required=False, widget=forms.URLInput(attrs={"class": "form-control"})
-    )
-    genres = forms.ModelMultipleChoiceField(
-        queryset=Genre.objects.all(),
-        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
-    )
-    is_featured = forms.BooleanField(
-        required=False, widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
-    )
-    privacy = forms.ChoiceField(
-        choices=Media.PRIVACY_CHOICES,
-        initial="public",
-        widget=forms.Select(attrs={"class": "form-select"}),
-    )
-
-    # ShortVideo fields
-    duration = forms.IntegerField(
-        help_text="Duration in seconds (max 60)",
-        widget=forms.NumberInput(attrs={"class": "form-control", "min": 1, "max": 60}),
-    )
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
-
-    def clean_duration(self):
-        duration = self.cleaned_data.get("duration")
-        if duration and duration > 60:
-            raise forms.ValidationError("Short videos must be 60 seconds or less.")
-        return duration
-
-
-class SimpleVideoForm(forms.ModelForm):
     class Meta:
-        model = SimpleVideo
+        model = Video
         fields = ["video_file", "title"]
         widgets = {
-            "video_file": forms.FileInput(attrs={"class": "form-control"}),
             "title": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Leave blank to extract from file",
-                }
+                attrs={"class": "form-control", "placeholder": "Video Title (Optional)"}
             ),
+            "video_file": forms.FileInput(attrs={"class": "form-control"}),
         }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
+    def clean_video_file(self):
+        video_file = self.cleaned_data.get("video_file")
+        if video_file:
+            # Check file size (e.g., limit to 2GB or user's remaining storage)
+            if video_file.size > 2 * 1024 * 1024 * 1024:
+                raise forms.ValidationError("File size too large (max 2GB).")
+
+            if self.user:
+                # Check user's storage limit
+                used_space = self.user.used_space  # In MB
+                file_size_mb = video_file.size / (1024 * 1024)
+                if used_space + file_size_mb > self.user.storage_limit_mb:
+                    raise forms.ValidationError(
+                        f"Upload exceeds your available storage. You have {self.user.available_space} MB remaining."
+                    )
+
+        return video_file
+
     def save(self, commit=True):
-        instance = super().save(commit=False)
+        video = super().save(commit=False)
         if self.user:
-            instance.uploader = self.user
+            video.uploader = self.user
         if commit:
-            instance.save()
-            # Extract metadata after saving the file
-            instance.extract_metadata()
-            instance.save()  # Save again with extracted metadata
-        return instance
+            video.save()
+        return video
+
+
+class ShortVideoForm(forms.ModelForm):
+    """Form for creating a standalone ShortVideo"""
+
+    class Meta:
+        model = ShortVideo
+        fields = ["video_file", "title"]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Video Title (Optional)"}
+            ),
+            "video_file": forms.FileInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
 
     def clean_video_file(self):
         video_file = self.cleaned_data.get("video_file")
-        if video_file and self.user:
-            file_size_mb = video_file.size / (1024 * 1024)
-            if not self.user.can_upload(file_size_mb):
-                raise forms.ValidationError(
-                    f"File size ({file_size_mb:.2f} MB) exceeds your available storage ({self.user.available_space:.2f} MB)."
-                )
+        if video_file:
+            # Check file size (e.g., limit to 500MB for short videos)
+            if video_file.size > 500 * 1024 * 1024:
+                raise forms.ValidationError("File size too large (max 500MB).")
+
+            if self.user:
+                # Check user's storage limit
+                used_space = self.user.used_space  # In MB
+                file_size_mb = video_file.size / (1024 * 1024)
+                if used_space + file_size_mb > self.user.storage_limit_mb:
+                    raise forms.ValidationError(
+                        f"Upload exceeds your available storage. You have {self.user.available_space} MB remaining."
+                    )
+
         return video_file
+
+    def save(self, commit=True):
+        short_video = super().save(commit=False)
+        if self.user:
+            short_video.uploader = self.user
+        if commit:
+            short_video.save()
+        return short_video
+
+

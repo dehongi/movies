@@ -1,11 +1,12 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from .models import Media, MediaPlatform, Platform, SimpleVideo
-from .forms import SimpleVideoForm
+from .models import Media, MediaPlatform, Platform
+from .forms import VideoForm
 from unittest.mock import patch
 
 User = get_user_model()
+
 
 
 class StorageLimitTests(TestCase):
@@ -13,14 +14,19 @@ class StorageLimitTests(TestCase):
         self.user = User.objects.create_user(
             email="test@example.com", password="password", storage_limit=1
         )  # 1GB limit
+        from .models import Genre
+        self.genre = Genre.objects.create(name="Test Genre")
+
 
     def test_upload_within_limit(self):
         # 10MB file
         file = SimpleUploadedFile(
             "test.mp4", b"0" * 10 * 1024 * 1024, content_type="video/mp4"
         )
-        form = SimpleVideoForm(
-            data={"title": "Test Video"}, files={"video_file": file}, user=self.user
+        form = VideoForm(
+            data={"title": "Test Video"},
+            files={"video_file": file},
+            user=self.user,
         )
         self.assertTrue(form.is_valid())
 
@@ -32,8 +38,10 @@ class StorageLimitTests(TestCase):
         )
         file.size = 1.1 * 1024 * 1024 * 1024  # 1.1 GB
 
-        form = SimpleVideoForm(
-            data={"title": "Large Video"}, files={"video_file": file}, user=self.user
+        form = VideoForm(
+            data={"title": "Large Video"},
+            files={"video_file": file},
+            user=self.user,
         )
         self.assertFalse(form.is_valid())
         self.assertIn("video_file", form.errors)

@@ -11,7 +11,7 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.edit import FormMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
@@ -34,7 +34,6 @@ from .models import (
     Podcast,
     ShortVideo,
     Video,
-    SimpleVideo,
 )
 from .forms import (
     GenreForm,
@@ -52,10 +51,9 @@ from .forms import (
     EpisodeFormSet,
     MovieWithMediaForm,
     SeriesWithMediaForm,
+    VideoForm,
+    ShortVideoForm,
     PodcastWithMediaForm,
-    VideoWithMediaForm,
-    ShortVideoWithMediaForm,
-    SimpleVideoForm,
 )
 
 
@@ -510,10 +508,11 @@ class PodcastCreateView(LoginRequiredMixin, FormView):
 
 
 @method_decorator(login_required, name="dispatch")
-class VideoCreateView(LoginRequiredMixin, FormView):
-    form_class = VideoWithMediaForm
+class VideoCreateView(LoginRequiredMixin, CreateView):
+    model = Video
+    form_class = VideoForm
     template_name = "movies/video_form.html"
-    success_url = reverse_lazy("movies:media_list")
+    success_url = reverse_lazy("movies:video_list")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -521,50 +520,59 @@ class VideoCreateView(LoginRequiredMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        with transaction.atomic():
-            # Create Media object
-            media_type, _ = MediaType.objects.get_or_create(name="Video")
-
-            media = Media.objects.create(
-                title=form.cleaned_data["title"],
-                description=form.cleaned_data["description"],
-                release_year=form.cleaned_data["release_year"],
-                poster=(
-                    form.cleaned_data["poster"]
-                    if "poster" in form.cleaned_data
-                    else None
-                ),
-                trailer_url=form.cleaned_data["trailer_url"],
-                media_type=media_type,
-                uploader=self.request.user,
-                is_featured=form.cleaned_data["is_featured"],
-                privacy=form.cleaned_data["privacy"],
-            )
-
-            # Add genres
-            media.genres.set(form.cleaned_data["genres"])
-
-            # Create Video object
-            video = Video.objects.create(
-                media=media,
-                duration=form.cleaned_data["duration"],
-            )
-
-            messages.success(
-                self.request, f'Video "{media.title}" has been created successfully!'
-            )
-            self.success_url = reverse(
-                "movies:media_detail", kwargs={"slug": media.slug}
-            )
-
+        form.instance.uploader = self.request.user
+        media_type, _ = MediaType.objects.get_or_create(name="Video")
+        form.instance.media_type = media_type
+        messages.success(self.request, "Video uploaded successfully!")
         return super().form_valid(form)
+
+
+class VideoListView(ListView):
+    model = Video
+    template_name = "movies/video_list.html"
+    context_object_name = "videos"
+    paginate_by = 12
+    ordering = ["-created_at"]
+
+
+class VideoDetailView(DetailView):
+    model = Video
+    template_name = "movies/video_detail.html"
+    context_object_name = "video"
+
+
+class VideoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Video
+    form_class = VideoForm
+    template_name = "movies/video_form.html"
+    success_url = reverse_lazy("movies:video_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def test_func(self):
+        video = self.get_object()
+        return self.request.user == video.uploader
+
+
+class VideoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Video
+    template_name = "movies/video_confirm_delete.html"
+    success_url = reverse_lazy("movies:video_list")
+
+    def test_func(self):
+        video = self.get_object()
+        return self.request.user == video.uploader
 
 
 @method_decorator(login_required, name="dispatch")
-class ShortVideoCreateView(LoginRequiredMixin, FormView):
-    form_class = ShortVideoWithMediaForm
+class ShortVideoCreateView(LoginRequiredMixin, CreateView):
+    model = ShortVideo
+    form_class = ShortVideoForm
     template_name = "movies/shortvideo_form.html"
-    success_url = reverse_lazy("movies:media_list")
+    success_url = reverse_lazy("movies:shortvideo_list")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -572,44 +580,48 @@ class ShortVideoCreateView(LoginRequiredMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        with transaction.atomic():
-            # Create Media object
-            media_type, _ = MediaType.objects.get_or_create(name="ShortVideo")
-
-            media = Media.objects.create(
-                title=form.cleaned_data["title"],
-                description=form.cleaned_data["description"],
-                release_year=form.cleaned_data["release_year"],
-                poster=(
-                    form.cleaned_data["poster"]
-                    if "poster" in form.cleaned_data
-                    else None
-                ),
-                trailer_url=form.cleaned_data["trailer_url"],
-                media_type=media_type,
-                uploader=self.request.user,
-                is_featured=form.cleaned_data["is_featured"],
-                privacy=form.cleaned_data["privacy"],
-            )
-
-            # Add genres
-            media.genres.set(form.cleaned_data["genres"])
-
-            # Create ShortVideo object
-            shortvideo = ShortVideo.objects.create(
-                media=media,
-                duration=form.cleaned_data["duration"],
-            )
-
-            messages.success(
-                self.request,
-                f'Short video "{media.title}" has been created successfully!',
-            )
-            self.success_url = reverse(
-                "movies:media_detail", kwargs={"slug": media.slug}
-            )
-
+        messages.success(self.request, "Short video uploaded successfully!")
         return super().form_valid(form)
+
+
+class ShortVideoListView(ListView):
+    model = ShortVideo
+    template_name = "movies/shortvideo_list.html"
+    context_object_name = "short_videos"
+    paginate_by = 12
+    ordering = ["-created_at"]
+
+
+class ShortVideoDetailView(DetailView):
+    model = ShortVideo
+    template_name = "movies/shortvideo_detail.html"
+    context_object_name = "short_video"
+
+
+class ShortVideoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = ShortVideo
+    form_class = ShortVideoForm
+    template_name = "movies/shortvideo_form.html"
+    success_url = reverse_lazy("movies:shortvideo_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def test_func(self):
+        short_video = self.get_object()
+        return self.request.user == short_video.uploader
+
+
+class ShortVideoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = ShortVideo
+    template_name = "movies/shortvideo_confirm_delete.html"
+    success_url = reverse_lazy("movies:shortvideo_list")
+
+    def test_func(self):
+        short_video = self.get_object()
+        return self.request.user == short_video.uploader
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1083,64 +1095,4 @@ class SearchView(ListView):
         return Media.objects.none()
 
 
-# SimpleVideo Views
-class SimpleVideoListView(ListView):
-    model = SimpleVideo
-    template_name = "movies/simplevideo_list.html"
-    context_object_name = "simple_videos"
-    paginate_by = 12
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        # Filter by user if needed, but for now show all
-        return queryset.order_by("-upload_date")
-
-
-class SimpleVideoDetailView(DetailView):
-    model = SimpleVideo
-    template_name = "movies/simplevideo_detail.html"
-    context_object_name = "simple_video"
-
-
-@method_decorator(login_required, name="dispatch")
-class SimpleVideoCreateView(LoginRequiredMixin, CreateView):
-    model = SimpleVideo
-    form_class = SimpleVideoForm
-    template_name = "movies/simplevideo_form.html"
-    success_url = reverse_lazy("movies:simplevideo_list")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        messages.success(
-            self.request,
-            f'Simple video "{form.instance.title or form.instance.video_file.name}" has been uploaded successfully!',
-        )
-        return super().form_valid(form)
-
-
-@method_decorator(login_required, name="dispatch")
-class SimpleVideoUpdateView(LoginRequiredMixin, UpdateView):
-    model = SimpleVideo
-    form_class = SimpleVideoForm
-    template_name = "movies/simplevideo_form.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def get_success_url(self):
-        return reverse("movies:simplevideo_detail", kwargs={"pk": self.object.pk})
-
-
-@method_decorator(login_required, name="dispatch")
-class SimpleVideoDeleteView(LoginRequiredMixin, DeleteView):
-    model = SimpleVideo
-    template_name = "movies/simplevideo_confirm_delete.html"
-
-    def get_success_url(self):
-        return reverse_lazy("movies:simplevideo_list")

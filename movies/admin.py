@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from .models import (
     Genre,
@@ -8,9 +9,10 @@ from .models import (
     Season,
     Episode,
     VideoFile,
+    Video,
+    ShortVideo,
     Review,
     Watchlist,
-    SimpleVideo,
 )
 
 
@@ -82,12 +84,7 @@ class WatchlistAdmin(admin.ModelAdmin):
     date_hierarchy = "added_at"
 
 
-class SimpleVideoAdmin(admin.ModelAdmin):
-    list_display = ("title", "uploader", "duration", "upload_date")
-    list_filter = ("upload_date",)
-    search_fields = ("title", "uploader__email")
-    date_hierarchy = "upload_date"
-    readonly_fields = ("duration", "thumbnail")
+
 
 
 class MediaAdmin(admin.ModelAdmin):
@@ -127,6 +124,20 @@ class MediaAdmin(admin.ModelAdmin):
     )
 
 
+class VideoAdmin(admin.ModelAdmin):
+    list_display = ("title", "uploader", "duration", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("title", "uploader__email")
+    readonly_fields = ("duration", "thumbnail", "created_at")
+
+
+class ShortVideoAdmin(admin.ModelAdmin):
+    list_display = ("title", "uploader", "duration", "width", "height", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("title", "uploader__email")
+    readonly_fields = ("duration", "width", "height", "thumbnail", "created_at")
+
+
 # Register models
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(MediaType, MediaTypeAdmin)
@@ -136,6 +147,7 @@ admin.site.register(Series, SeriesAdmin)
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Episode, EpisodeAdmin)
 admin.site.register(VideoFile)
+admin.site.register(Video, VideoAdmin)
+admin.site.register(ShortVideo, ShortVideoAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Watchlist, WatchlistAdmin)
-admin.site.register(SimpleVideo, SimpleVideoAdmin)

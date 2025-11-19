@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Short Videos{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-5 fw-bold">Short Videos</h1>
+                {% if user.is_authenticated %}
+                <a href="{% url 'movies:shortvideo_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Upload Short Video
+                </a>
+                {% endif %}
+            </div>
+            <p class="text-muted">Vertical videos up to 3 minutes</p>
+        </div>
+    </div>
+
+    {% if short_videos %}
+    <div class="row g-3">
+        {% for short_video in short_videos %}
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="card h-100 shadow-sm">
+                {% if short_video.thumbnail %}
+                <img src="{{ short_video.thumbnail.url }}" class="card-img-top" alt="{{ short_video.title }}"
+                    style="aspect-ratio: 9/16; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
+                    style="aspect-ratio: 9/16;">
+                    <i class="fas fa-video fa-2x text-white"></i>
+                </div>
+                {% endif %}
+                <div class="card-body p-2">
+                    <h6 class="card-title mb-1 text-truncate" title="{{ short_video.title }}">{{ short_video.title }}
+                    </h6>
+                    <p class="card-text text-muted small mb-1">
+                        <i class="fas fa-clock me-1"></i>
+                        {% if short_video.duration %}
+                        {{ short_video.duration }}s
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </p>
+                    <p class="card-text text-muted small mb-2 text-truncate" title="{{ short_video.uploader.email }}">
+                        <i class="fas fa-user me-1"></i>{{ short_video.uploader.email|truncatechars:15 }}
+                    </p>
+                    <a href="{% url 'movies:shortvideo_detail' short_video.pk %}"
+                        class="btn btn-sm btn-outline-primary w-100">
+                        <i class="fas fa-play me-1"></i>Watch
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-mobile-alt fa-5x text-muted mb-4"></i>
+        <h3 class="text-muted">No short videos yet</h3>
+        <p class="text-muted">Be the first to upload a vertical short video!</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'movies:shortvideo_create' %}" class="btn btn-primary mt-3">
+            <i class="fas fa-plus me-2"></i>Upload Short Video
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

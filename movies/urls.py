@@ -68,35 +68,19 @@ urlpatterns = [
     # Podcast URLs
     path("podcasts/create/", views.PodcastCreateView.as_view(), name="podcast_create"),
     # Video URLs
+    # Video URLs
+    path("videos/", views.VideoListView.as_view(), name="video_list"),
     path("videos/create/", views.VideoCreateView.as_view(), name="video_create"),
+    path("videos/<int:pk>/", views.VideoDetailView.as_view(), name="video_detail"),
+    path("videos/<int:pk>/update/", views.VideoUpdateView.as_view(), name="video_update"),
+    path("videos/<int:pk>/delete/", views.VideoDeleteView.as_view(), name="video_delete"),
     # ShortVideo URLs
-    path(
-        "shortvideos/create/",
-        views.ShortVideoCreateView.as_view(),
-        name="shortvideo_create",
-    ),
-    # SimpleVideo URLs
-    path("simplevideos/", views.SimpleVideoListView.as_view(), name="simplevideo_list"),
-    path(
-        "simplevideos/<int:pk>/",
-        views.SimpleVideoDetailView.as_view(),
-        name="simplevideo_detail",
-    ),
-    path(
-        "simplevideos/create/",
-        views.SimpleVideoCreateView.as_view(),
-        name="simplevideo_create",
-    ),
-    path(
-        "simplevideos/<int:pk>/update/",
-        views.SimpleVideoUpdateView.as_view(),
-        name="simplevideo_update",
-    ),
-    path(
-        "simplevideos/<int:pk>/delete/",
-        views.SimpleVideoDeleteView.as_view(),
-        name="simplevideo_delete",
-    ),
+    path("shortvideos/", views.ShortVideoListView.as_view(), name="shortvideo_list"),
+    path("shortvideos/create/", views.ShortVideoCreateView.as_view(), name="shortvideo_create"),
+    path("shortvideos/<int:pk>/", views.ShortVideoDetailView.as_view(), name="shortvideo_detail"),
+    path("shortvideos/<int:pk>/update/", views.ShortVideoUpdateView.as_view(), name="shortvideo_update"),
+    path("shortvideos/<int:pk>/delete/", views.ShortVideoDeleteView.as_view(), name="shortvideo_delete"),
+
     # Season URLs
     path(
         "series/<slug:series_slug>/seasons/<int:season_number>/",
