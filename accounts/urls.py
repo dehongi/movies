@@ -45,4 +45,5 @@ urlpatterns = [
     # Dashboard and Plan
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path("plan/", views.PlanView.as_view(), name="plan"),
+    path("plan/upgrade/", views.UpgradeView.as_view(), name="upgrade"),
 ]

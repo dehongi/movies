@@ -99,3 +99,21 @@ class CustomUser(AbstractUser):
         if self.storage_limit_mb == 0:
             return 0
         return (self.used_space / self.storage_limit_mb) * 100
+
+
+class Payment(models.Model):
+    """
+    Record of user payments for subscription plans.
+    """
+
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="payments"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    plan = models.CharField(max_length=10, choices=CustomUser.PLAN_CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    successful = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.plan} - ${self.amount}"
+

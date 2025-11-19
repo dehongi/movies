@@ -118,3 +118,11 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("first_name", "last_name", "bio", "profile_picture")
+
+
+class UpgradeForm(forms.Form):
+    plan = forms.ChoiceField(
+        choices=[("premium", "Premium ($10/mo)"), ("pro", "Pro ($20/mo)")],
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+    )
+

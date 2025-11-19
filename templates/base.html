@@ -1,345 +1,257 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MovieHub{% endblock %}</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="MovieHub - The ultimate platform for movie and TV series enthusiasts. Discover, watch, and share your favorite content." />
+  <title>{% block title %}MovieHub{% endblock %}</title>
 
-    <!-- Bootstrap 5.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'movies/css/movies.css' %}">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'movies/css/movies.css' %}" />
 
-    {% block extra_css %}
+  {% block extra_css %}
 
-    {% endblock %}
-  </head>
-  <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'website:home' %}">
-          <div class="brand-icon me-2">
-            <i class="bi bi-film fs-4"></i>
-          </div>
-          <span>MovieHub</span>
-        </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'website' %}active fw-bold{% endif %}" href="{% url 'website:home' %}">
-                <i class="bi bi-house-door me-1"></i>Home
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'movies' %}active fw-bold{% endif %}" href="{% url 'movies:home' %}">
-                <i class="bi bi-film me-1"></i>Movies
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-3 py-2 {% if request.resolver_match.url_name == 'media_list' %}active fw-bold{% endif %}" href="{% url 'movies:media_list' %}">
-                <i class="bi bi-grid me-1"></i>Browse
-              </a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-tags me-1"></i>Categories
-              </a>
-              <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="navbarDropdown">
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'movies:media_list' %}?type=Movie">
-                    <i class="bi bi-camera-reels me-2"></i>Movies
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'movies:media_list' %}?type=Series">
-                    <i class="bi bi-tv me-2"></i>TV Series
-                  </a>
-                </li>
-                <li>
-                  <hr class="dropdown-divider" />
-                </li>
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'movies:genre_list' %}">
-                    <i class="bi bi-collection me-2"></i>All Genres
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-info-circle me-1"></i>About Us
-              </a>
-              <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="aboutDropdown">
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'website:about' %}">
-                    <i class="bi bi-building me-2"></i>About MovieHub
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'website:contact' %}">
-                    <i class="bi bi-envelope me-2"></i>Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item py-2" href="{% url 'website:faq' %}">
-                    <i class="bi bi-question-circle me-2"></i>FAQ
-                  </a>
-                </li>
-              </ul>
-            </li>
-            {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle px-3 py-2" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-cloud-upload me-1"></i>Upload
-                </a>
-                <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="uploadDropdown">
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:movie_create' %}">
-                      <i class="bi bi-camera-reels me-2"></i>Upload Movie
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:series_create' %}">
-                      <i class="bi bi-tv me-2"></i>Upload Series
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:video_create' %}">
-                      <i class="bi bi-play-circle me-2"></i>Upload Video
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:shortvideo_create' %}">
-                      <i class="bi bi-play-circle-fill me-2"></i>Upload Short Video
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:simplevideo_create' %}">
-                      <i class="bi bi-file-earmark-play me-2"></i>Upload Simple Video
-                    </a>
-                  </li>
-                </ul>
+  {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'website:home' %}">
+        MovieHub
+      </a>
+      <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'website' %}active{% endif %}"
+              href="{% url 'website:home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'movies' %}active{% endif %}"
+              href="{% url 'movies:home' %}">Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'media_list' %}active{% endif %}"
+              href="{% url 'movies:media_list' %}">Browse</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Categories
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Movie">Movies</a>
               </li>
-            {% endif %}
-          </ul>
-          <form class="d-flex me-3" action="{% url 'movies:search' %}" method="get">
-            <div class="input-group">
-              <input class="form-control border-end-0" type="search" name="q" placeholder="Search movies, series..." aria-label="Search" />
-              <button class="btn btn-outline-secondary border-start-0" type="submit">
-                <i class="bi bi-search"></i>
-              </button>
-            </div>
-          </form>
-          <div class="d-flex align-items-center">
-            {% if user.is_authenticated %}
-              <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  <div class="user-avatar-sm me-2">
-                    <i class="bi bi-person-circle"></i>
-                  </div>
-                  <span class="d-none d-md-inline">{{ user.email|truncatechars:15 }}</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" aria-labelledby="userDropdown">
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'accounts:dashboard' %}">
-                      <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
-                      <i class="bi bi-person me-2"></i>Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'accounts:plan' %}">
-                      <i class="bi bi-star me-2"></i>My Plan
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="{% url 'movies:watchlist' %}">
-                      <i class="bi bi-bookmark-heart me-2"></i>My Watchlist
-                    </a>
-                  </li>
-                  {% if user.is_staff %}
-                    <li>
-                      <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                      <a class="dropdown-item py-2" href="{% url 'admin:index' %}">
-                        <i class="bi bi-gear me-2"></i>Admin
-                      </a>
-                    </li>
-                  {% endif %}
-                  <li>
-                    <hr class="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}">
-                      <i class="bi bi-box-arrow-right me-2"></i>Logout
-                    </a>
-                  </li>
-                </ul>
+              <li>
+                <a class="dropdown-item" href="{% url 'movies:media_list' %}?type=Series">TV Series</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'movies:genre_list' %}">All Genres</a>
+              </li>
+            </ul>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Upload
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="uploadDropdown">
+              <li><a class="dropdown-item" href="{% url 'movies:movie_create' %}"><i
+                    class="fas fa-film me-2"></i>Movie</a></li>
+              <li><a class="dropdown-item" href="{% url 'movies:series_create' %}"><i class="fas fa-tv me-2"></i>TV
+                  Series</a></li>
+              <li><a class="dropdown-item" href="{% url 'movies:podcast_create' %}"><i
+                    class="fas fa-microphone me-2"></i>Podcast</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="{% url 'movies:video_create' %}"><i
+                    class="fas fa-video me-2"></i>Video</a></li>
+              <li><a class="dropdown-item" href="{% url 'movies:shortvideo_create' %}"><i
+                    class="fas fa-mobile-alt me-2"></i>Short Video</a></li>
+              <li><a class="dropdown-item" href="{% url 'movies:simplevideo_create' %}"><i
+                    class="fas fa-play-circle me-2"></i>Simple Video</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+
+        <form class="d-flex me-3" action="{% url 'movies:search' %}" method="get">
+          <div class="input-group">
+            <input class="form-control border-end-0 bg-transparent text-white" type="search" name="q"
+              placeholder="Search..." aria-label="Search" style="border-color: rgba(255,255,255,0.3);" />
+            <button class="btn btn-outline-light border-start-0" type="submit"
+              style="border-color: rgba(255,255,255,0.3);">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+
+        <div class="d-flex align-items-center">
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-white"
+              id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar-sm me-2">
+                <i class="fas fa-user-circle fa-lg"></i>
               </div>
-            {% else %}
-              <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary me-2 px-3">
-                <i class="bi bi-box-arrow-in-right me-1"></i>Login
-              </a>
-              <a href="{% url 'accounts:signup' %}" class="btn btn-primary px-3">
-                <i class="bi bi-person-plus me-1"></i>Sign Up
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Alert Messages -->
-    {% if messages %}
-      <div class="container mt-3">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <!-- Main Content -->
-    <div class="content">
-      {% block content %}
-
-      {% endblock %}
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-3 mb-4 mb-md-0">
-            <h5 class="mb-4">MovieHub</h5>
-            <p>The ultimate platform for movie and TV series enthusiasts. Discover, watch, and share your favorite content.</p>
-            <div class="social-icons">
-              <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-              <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
-              <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
-              <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i></a>
-            </div>
-          </div>
-          <div class="col-md-3 mb-4 mb-md-0">
-            <h5 class="mb-4">Explore</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2">
-                <a href="{% url 'website:home' %}" class="text-light text-decoration-none">Home</a>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:dashboard' %}">Dashboard</a>
               </li>
-              <li class="mb-2">
-                <a href="{% url 'movies:home' %}" class="text-light text-decoration-none">Movies</a>
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a>
               </li>
-              <li class="mb-2">
-                <a href="{% url 'movies:media_list' %}?type=Movie" class="text-light text-decoration-none">Browse Movies</a>
+              <li>
+                <a class="dropdown-item" href="{% url 'movies:watchlist' %}">Watchlist</a>
               </li>
-              <li class="mb-2">
-                <a href="{% url 'movies:media_list' %}?type=Series" class="text-light text-decoration-none">TV Series</a>
+              {% if user.is_staff %}
+              <li>
+                <hr class="dropdown-divider" />
               </li>
-              <li class="mb-2">
-                <a href="{% url 'movies:genre_list' %}" class="text-light text-decoration-none">Genres</a>
+              <li>
+                <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
               </li>
-            </ul>
-          </div>
-          <div class="col-md-3 mb-4 mb-md-0">
-            <h5 class="mb-4">About</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2">
-                <a href="{% url 'website:about' %}" class="text-light text-decoration-none">About Us</a>
+              <li>
+                <a class="dropdown-item" href="{% url 'movies:movie_create' %}">Upload Movie</a>
               </li>
-              <li class="mb-2">
-                <a href="{% url 'website:contact' %}" class="text-light text-decoration-none">Contact</a>
-              </li>
-              <li class="mb-2">
-                <a href="{% url 'website:faq' %}" class="text-light text-decoration-none">FAQ</a>
-              </li>
-              <li class="mb-2">
-                <a href="{% url 'website:privacy' %}" class="text-light text-decoration-none">Privacy Policy</a>
-              </li>
-              <li class="mb-2">
-                <a href="{% url 'website:terms' %}" class="text-light text-decoration-none">Terms of Service</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-3">
-            <h5 class="mb-4">Account</h5>
-            <ul class="list-unstyled">
-              {% if user.is_authenticated %}
-                <li class="mb-2">
-                  <a href="{% url 'accounts:dashboard' %}" class="text-light text-decoration-none">Dashboard</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{% url 'accounts:profile' %}" class="text-light text-decoration-none">My Profile</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{% url 'accounts:plan' %}" class="text-light text-decoration-none">My Plan</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{% url 'movies:watchlist' %}" class="text-light text-decoration-none">Watchlist</a>
-                </li>
-                <li class="mb-2">
-                  <a href="#" class="text-light text-decoration-none">Logout</a>
-                </li>
-              {% else %}
-                <li class="mb-2">
-                  <a href="{% url 'accounts:login' %}" class="text-light text-decoration-none">Login</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{% url 'accounts:signup' %}" class="text-light text-decoration-none">Sign Up</a>
-                </li>
               {% endif %}
-            </ul>
-          </div>
-        </div>
-        <hr class="my-4 bg-light" />
-        <div class="row">
-          <div class="col-md-6 mb-3 mb-md-0">
-            <p class="mb-0">
-              &copy;{% now 'Y' %}MovieHub. All rights reserved.
-            </p>
-          </div>
-          <div class="col-md-6 text-md-end">
-            <ul class="list-inline mb-0">
-              <li class="list-inline-item">
-                <a href="{% url 'website:privacy' %}" class="text-light text-decoration-none">Privacy Policy</a>
+              <li>
+                <hr class="dropdown-divider" />
               </li>
-              <li class="list-inline-item mx-3">|</li>
-              <li class="list-inline-item">
-                <a href="{% url 'website:terms' %}" class="text-light text-decoration-none">Terms of Service</a>
+              <li>
+                <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">Logout</a>
               </li>
             </ul>
           </div>
+          {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm me-2">Login</a>
+          <a href="{% url 'accounts:signup' %}" class="btn btn-outline-light btn-sm">Sign Up</a>
+          {% endif %}
         </div>
       </div>
-    </footer>
+    </div>
+  </nav>
 
-    <!-- Bootstrap 5.3 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <!-- Alert Messages -->
+  {% if messages %}
+  <div class="container" style="margin-top: 80px;">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <!-- Custom JavaScript -->
-    <script src="{% static 'movies/js/movies.js' %}"></script>
-
-    {% block extra_js %}
+  <!-- Main Content -->
+  <div class="content">
+    {% block content %}
 
     {% endblock %}
-  </body>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5 class="mb-3 text-white">MovieHub</h5>
+          <p class="text-muted small">The ultimate platform for movie and TV series enthusiasts. Discover, watch, and
+            share your favorite content.</p>
+          <div class="social-icons mt-3">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-md-2 mb-4 footer-links">
+          <h6 class="mb-3 text-white">Browse</h6>
+          <a href="{% url 'movies:media_list' %}?type=Movie">Movies</a>
+          <a href="{% url 'movies:media_list' %}?type=Series">TV Series</a>
+          <a href="{% url 'movies:genre_list' %}">Genres</a>
+        </div>
+        <div class="col-md-2 mb-4 footer-links">
+          <h6 class="mb-3 text-white">Company</h6>
+          <a href="{% url 'website:about' %}">About Us</a>
+          <a href="{% url 'website:contact' %}">Contact</a>
+          <a href="{% url 'website:faq' %}">FAQ</a>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h6 class="mb-3 text-white">Newsletter</h6>
+          <p class="text-muted small">Subscribe to get the latest updates and news.</p>
+          <form class="d-flex">
+            <input class="form-control me-2 bg-dark border-secondary text-white" type="email"
+              placeholder="Enter your email" />
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="row mt-4 pt-3 border-top border-secondary">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="text-muted small mb-0">&copy; {% now 'Y' %} MovieHub. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end footer-links">
+          <a href="{% url 'website:privacy' %}" class="d-inline me-3 small">Privacy Policy</a>
+          <a href="{% url 'website:terms' %}" class="d-inline small">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5.3 JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="{% static 'movies/js/movies.js' %}"></script>
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 50) {
+        document.querySelector('.navbar').classList.add('scrolled');
+      } else {
+        document.querySelector('.navbar').classList.remove('scrolled');
+      }
+    });
+  </script>
+
+  {% block extra_js %}
+
+  {% endblock %}
+</body>
+
 </html>

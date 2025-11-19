@@ -157,9 +157,20 @@ class EpisodeForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         # Add Bootstrap file input styling
         self.fields["video_file"].widget.attrs.update({"class": "form-control"})
+
+    def clean_video_file(self):
+        video_file = self.cleaned_data.get("video_file")
+        if video_file and self.user:
+            file_size_mb = video_file.size / (1024 * 1024)
+            if not self.user.can_upload(file_size_mb):
+                raise forms.ValidationError(
+                    f"File size ({file_size_mb:.2f} MB) exceeds your available storage ({self.user.available_space:.2f} MB)."
+                )
+        return video_file
 
 
 class VideoFileForm(forms.ModelForm):
@@ -173,9 +184,20 @@ class VideoFileForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         # Add Bootstrap file input styling
         self.fields["video_file"].widget.attrs.update({"class": "form-control"})
+
+    def clean_video_file(self):
+        video_file = self.cleaned_data.get("video_file")
+        if video_file and self.user:
+            file_size_mb = video_file.size / (1024 * 1024)
+            if not self.user.can_upload(file_size_mb):
+                raise forms.ValidationError(
+                    f"File size ({file_size_mb:.2f} MB) exceeds your available storage ({self.user.available_space:.2f} MB)."
+                )
+        return video_file
 
 
 class ReviewForm(forms.ModelForm):
@@ -551,3 +573,13 @@ class SimpleVideoForm(forms.ModelForm):
             instance.extract_metadata()
             instance.save()  # Save again with extracted metadata
         return instance
+
+    def clean_video_file(self):
+        video_file = self.cleaned_data.get("video_file")
+        if video_file and self.user:
+            file_size_mb = video_file.size / (1024 * 1024)
+            if not self.user.can_upload(file_size_mb):
+                raise forms.ValidationError(
+                    f"File size ({file_size_mb:.2f} MB) exceeds your available storage ({self.user.available_space:.2f} MB)."
+                )
+        return video_file

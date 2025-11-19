@@ -3,7 +3,14 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView, TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DetailView,
+    TemplateView,
+    FormView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
     LoginView,
@@ -22,9 +29,11 @@ from .forms import (
     CustomPasswordResetForm,
     CustomSetPasswordForm,
     CustomPasswordChangeForm,
+    CustomPasswordChangeForm,
     ProfileUpdateForm,
+    UpgradeForm,
 )
-from .models import CustomUser
+from .models import CustomUser, Payment
 
 
 class SignUpView(CreateView):
@@ -140,3 +149,30 @@ class PlanView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return self.request.user
+
+
+class UpgradeView(LoginRequiredMixin, FormView):
+    template_name = "accounts/upgrade.html"
+    form_class = UpgradeForm
+    success_url = reverse_lazy("accounts:profile")
+
+    def form_valid(self, form):
+        # Mock payment processing
+        plan = form.cleaned_data["plan"]
+        # Update user
+        self.request.user.plan = plan
+        if plan == "premium":
+            self.request.user.storage_limit = 50  # 50GB
+        elif plan == "pro":
+            self.request.user.storage_limit = 100  # 100GB
+        self.request.user.save()
+
+        # Record payment
+        Payment.objects.create(
+            user=self.request.user,
+            amount=10.00 if plan == "premium" else 20.00,
+            plan=plan,
+        )
+        messages.success(self.request, f"Upgraded to {plan} plan!")
+        return super().form_valid(form)
+

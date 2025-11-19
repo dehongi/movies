@@ -342,7 +342,9 @@ class MovieUpdateView(LoginRequiredMixin, View):
         # Initialize both forms with instance data
         media_form = MediaForm(instance=media)
         movie_form = MovieForm(instance=movie)
-        video_formset = VideoFileFormSet(instance=movie)
+        video_formset = VideoFileFormSet(
+            instance=movie, form_kwargs={"user": request.user}
+        )
 
         return render(
             request,
@@ -361,7 +363,9 @@ class MovieUpdateView(LoginRequiredMixin, View):
 
         media_form = MediaForm(request.POST, request.FILES, instance=media)
         movie_form = MovieForm(request.POST, instance=movie)
-        video_formset = VideoFileFormSet(request.POST, request.FILES, instance=movie)
+        video_formset = VideoFileFormSet(
+            request.POST, request.FILES, instance=movie, form_kwargs={"user": request.user}
+        )
 
         if media_form.is_valid() and movie_form.is_valid() and video_formset.is_valid():
             with transaction.atomic():
@@ -840,6 +844,11 @@ class EpisodeCreateView(LoginRequiredMixin, CreateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.season = self.season
         return super().form_valid(form)
@@ -865,6 +874,11 @@ class EpisodeUpdateView(LoginRequiredMixin, UpdateView):
     model = Episode
     form_class = EpisodeForm
     template_name = "movies/episode_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_object(self, queryset=None):
         series_slug = self.kwargs.get("series_slug")

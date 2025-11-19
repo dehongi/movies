@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Upgrade Your Plan</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Current Plan:</strong> {{ user.get_plan_display }}</p>
+                    <p><strong>Storage Limit:</strong> {{ user.storage_limit }} GB</p>
+                    <p><strong>Used Space:</strong> {{ user.used_space|filesizeformat }}</p>
+                    
+                    <hr>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Upgrade Now</button>
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
