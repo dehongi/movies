@@ -2,51 +2,57 @@
 {% load static custom_filters %}
 
 {% block title %}
-  MovieHub - Home
+MovieHub - Home
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/css/home.css' %}" />
 {% endblock %}
 
 {% block content %}
-  <!-- Hero Banner -->
-  <section class="hero-banner">
-    <div class="header-banner" style="background-image: url('https://source.unsplash.com/random/1920x1080/?movie,cinema');">
-      <div class="container">
-        <div class="header-content">
-          <div class="row align-items-center">
-            <div class="col-lg-7">
-              <h1 class="display-4 fw-bold mb-4 slide-up">Unlimited Movies, TV Shows, and more.</h1>
-              <p class="lead mb-4 fade-in" style="animation-delay: 0.2s;">Watch anywhere. Cancel anytime. Join today and start streaming your favorite content.</p>
-              <div class="d-flex flex-column flex-sm-row gap-3 fade-in" style="animation-delay: 0.4s;">
-                <a href="{% url 'movies:media_list' %}" class="btn btn-primary btn-lg fw-bold px-4 py-3">
-                  <i class="bi bi-film me-2"></i>Browse Movies
-                </a>
-                {% if not user.is_authenticated %}
-                  <a href="{% url 'accounts:signup' %}" class="btn btn-outline-light btn-lg px-4 py-3">
-                    <i class="bi bi-person-plus me-2"></i>Sign Up Now
-                  </a>
-                {% endif %}
-              </div>
+<!-- Hero Banner -->
+<section class="hero-banner">
+  <div class="header-banner"
+    style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&q=80');">
+    <div class="container">
+      <div class="header-content">
+        <div class="row align-items-center">
+          <div class="col-lg-7">
+            <h1 class="display-4 fw-bold mb-4 slide-up">Unlimited Movies, TV Shows, and more.</h1>
+            <p class="lead mb-4 fade-in" style="animation-delay: 0.2s;">Watch anywhere. Cancel anytime. Join today and
+              start streaming your favorite content.</p>
+            <div class="d-flex flex-column flex-sm-row gap-3 fade-in" style="animation-delay: 0.4s;">
+              <a href="{% url 'movies:media_list' %}" class="btn btn-primary btn-lg fw-bold px-4 py-3">
+                <i class="bi bi-film me-2"></i>Browse Movies
+              </a>
+              {% if not user.is_authenticated %}
+              <a href="{% url 'accounts:signup' %}" class="btn btn-outline-light btn-lg px-4 py-3">
+                <i class="bi bi-person-plus me-2"></i>Sign Up Now
+              </a>
+              {% endif %}
             </div>
-            <div class="col-lg-5 d-none d-lg-block">
-              <div class="hero-visual fade-in" style="animation-delay: 0.6s;">
-                <div class="position-relative">
-                  <div class="hero-card card border-0 shadow-lg" style="transform: rotate(-5deg);">
-                    <div class="card-body text-center p-4">
-                      <i class="bi bi-play-circle-fill display-1 text-primary mb-3"></i>
-                      <h5 class="card-title">Start Watching</h5>
-                      <p class="card-text text-muted">Explore thousands of movies and shows</p>
-                    </div>
+          </div>
+          <div class="col-lg-5 d-none d-lg-block">
+            <div class="hero-visual fade-in" style="animation-delay: 0.6s;">
+              <div class="position-relative">
+                <div class="hero-card card border-0 shadow-lg" style="transform: rotate(-5deg);">
+                  <div class="card-body text-center p-4">
+                    <i class="bi bi-play-circle-fill display-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Start Watching</h5>
+                    <p class="card-text text-muted">Explore thousands of movies and shows</p>
                   </div>
-                  <div class="hero-card card border-0 shadow-lg position-absolute top-50 start-50 translate-middle" style="transform: rotate(5deg); z-index: 2;">
-                    <div class="card-body text-center p-3">
-                      <i class="bi bi-star-fill text-warning fs-1 mb-2"></i>
-                      <h6 class="card-title mb-1">Top Rated</h6>
-                      <div class="rating-stars">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                      </div>
+                </div>
+                <div class="hero-card card border-0 shadow-lg position-absolute top-50 start-50 translate-middle"
+                  style="transform: rotate(5deg); z-index: 2;">
+                  <div class="card-body text-center p-3">
+                    <i class="bi bi-star-fill text-warning fs-1 mb-2"></i>
+                    <h6 class="card-title mb-1">Top Rated</h6>
+                    <div class="rating-stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
                     </div>
                   </div>
                 </div>
@@ -56,267 +62,278 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Featured Content -->
-  <section class="featured-content py-5">
-    <div class="container">
-      <h2 class="section-title fade-in">Featured Content</h2>
-      <div class="row">
-        {% for media in featured_media %}
-          <div class="col-md-6 col-lg-3 mb-4 slide-up" style="animation-delay: {{ forloop.counter0|add:'0.1'|mul:'0.1' }}s;">
-            <div class="card media-card h-100 shadow-sm">
+<!-- Featured Content -->
+<section class="featured-content py-5">
+  <div class="container">
+    <h2 class="section-title fade-in">Featured Content</h2>
+    <div class="row">
+      {% for media in featured_media %}
+      <div class="col-md-6 col-lg-3 mb-4 slide-up"
+        style="animation-delay: {{ forloop.counter0|add:'0.1'|mul:'0.1' }}s;">
+        <div class="card media-card h-100 shadow-sm">
+          {% if media.poster %}
+          <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}" loading="lazy" />
+          {% else %}
+          <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-2">{{ media.title }}</h5>
+            <p class="card-text text-muted small mb-3">{{ media.release_year }} • {{ media.media_type.name }}</p>
+            <div class="mb-3">
+              {% for genre in media.genres.all|slice:':3' %}
+              <span class="badge-genre">{{ genre.name }}</span>
+              {% endfor %}
+            </div>
+            <div class="mt-auto">
+              <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-info-circle me-1"></i>View Details
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info fade-in">
+          <i class="bi bi-info-circle me-2"></i>No featured content available at the moment.
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Latest Movies -->
+<section class="latest-movies py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title mb-0 fade-in">Latest Movies</h2>
+      <a href="{% url 'movies:media_list' %}?type=Movie" class="btn btn-outline-primary slide-up">
+        <i class="bi bi-arrow-right me-1"></i>View All
+      </a>
+    </div>
+    <div class="row">
+      {% for movie in latest_movies %}
+      <div class="col-md-6 col-lg-4 col-xl-2 mb-4 slide-up"
+        style="animation-delay: {{ forloop.counter0|add:'0.1'|mul:'0.05' }}s;">
+        <div class="card media-card h-100 shadow-sm position-relative overflow-hidden">
+          {% if movie.poster %}
+          <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}" loading="lazy" />
+          {% else %}
+          <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title text-truncate mb-2">{{ movie.title }}</h6>
+            <p class="card-text small text-muted mb-auto">{{ movie.release_year }}</p>
+            <div class="mt-2">
+              <a href="{% url 'movies:media_detail' slug=movie.slug %}" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-play-fill me-1"></i>Watch
+              </a>
+            </div>
+          </div>
+          <div
+            class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0"
+            style="background: rgba(99, 102, 241, 0.9); transition: opacity 0.3s ease;">
+            <i class="bi bi-play-circle-fill text-white fs-1"></i>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info fade-in">
+          <i class="bi bi-info-circle me-2"></i>No movies available at the moment.
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Latest TV Series -->
+<section class="latest-series py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title mb-0">Latest TV Series</h2>
+      <a href="{% url 'movies:media_list' %}?type=Series" class="btn btn-outline-primary">View All</a>
+    </div>
+    <div class="row">
+      {% for series in latest_series %}
+      <div class="col-md-6 col-lg-4 col-xl-2 mb-4">
+        <div class="card media-card h-100 shadow-sm">
+          {% if series.poster %}
+          <img src="{{ series.poster.url }}" class="card-img-top" alt="{{ series.title }}" loading="lazy" />
+          {% else %}
+          <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+          {% endif %}
+          <div class="card-body">
+            <h6 class="card-title text-truncate">{{ series.title }}</h6>
+            <p class="card-text small text-muted">
+              {{ series.release_year }} • {{ series.series_details.total_seasons }} season
+              {% if series.series_details.total_seasons != 1 %}s{% endif %}
+            </p>
+            <a href="{% url 'movies:media_detail' slug=series.slug %}" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info">No TV series available at the moment.</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Latest Podcasts -->
+<section class="latest-podcasts py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title mb-0">Latest Podcasts</h2>
+      <a href="{% url 'movies:media_list' %}?type=Podcast" class="btn btn-outline-primary">View All</a>
+    </div>
+    <div class="row">
+      {% for podcast in latest_podcasts %}
+      <div class="col-md-6 col-lg-4 col-xl-2 mb-4">
+        <div class="card media-card h-100 shadow-sm">
+          {% if podcast.poster %}
+          <img src="{{ podcast.poster.url }}" class="card-img-top" alt="{{ podcast.title }}" loading="lazy" />
+          {% else %}
+          <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+          {% endif %}
+          <div class="card-body">
+            <h6 class="card-title text-truncate">{{ podcast.title }}</h6>
+            <p class="card-text small text-muted">
+              {{ podcast.release_year }} • {{ podcast.podcast_details.episode_count }} episode
+              {% if podcast.podcast_details.episode_count != 1 %}s{% endif %}
+            </p>
+            <a href="{% url 'movies:media_detail' slug=podcast.slug %}" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info">No podcasts available at the moment.</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Popular Content -->
+<section class="popular-content py-5 bg-light">
+  <div class="container">
+    <h2 class="section-title">Popular Content</h2>
+    <div class="row">
+      {% for media in popular_media %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="row g-0">
+            <div class="col-4">
               {% if media.poster %}
-                <img src="{{ media.poster.url }}" class="card-img-top" alt="{{ media.title }}" />
+              <img src="{{ media.poster.url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;"
+                alt="{{ media.title }}" loading="lazy" />
               {% else %}
-                <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
+              <img src="https://via.placeholder.com/350x200?text=No+Image" class="img-fluid rounded-start h-100"
+                style="object-fit: cover;" alt="No Image" />
               {% endif %}
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2">{{ media.title }}</h5>
-                <p class="card-text text-muted small mb-3">{{ media.release_year }} • {{ media.media_type.name }}</p>
-                <div class="mb-3">
-                  {% for genre in media.genres.all|slice:':3' %}
-                    <span class="badge-genre">{{ genre.name }}</span>
-                  {% endfor %}
+            </div>
+            <div class="col-8">
+              <div class="card-body">
+                <h5 class="card-title">{{ media.title }}</h5>
+                <p class="card-text small text-muted">{{ media.release_year }} • {{ media.media_type.name }}</p>
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-eye-fill text-primary me-1"></i>
+                  <span>{{ media.views_count }} views</span>
                 </div>
-                <div class="mt-auto">
-                  <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-primary btn-sm w-100">
-                    <i class="bi bi-info-circle me-1"></i>View Details
-                  </a>
-                </div>
+                <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-sm btn-outline-primary">View
+                  Details</a>
               </div>
             </div>
           </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info fade-in">
-              <i class="bi bi-info-circle me-2"></i>No featured content available at the moment.
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info">No popular content available at the moment.</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Browse by Genre -->
+<section class="genres py-5">
+  <div class="container">
+    <h2 class="section-title">Browse by Genre</h2>
+    <div class="row g-3">
+      {% for genre in genres|slice:':12' %}
+      <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+        <a href="{% url 'movies:genre_detail' slug=genre.slug %}" class="text-decoration-none">
+          <div class="card bg-dark text-white h-100">
+            <div class="card-body text-center py-4">
+              <i class="fa fa-film fa-2x mb-3"></i>
+              <h5 class="card-title mb-0">{{ genre.name }}</h5>
             </div>
           </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <!-- Latest Movies -->
-  <section class="latest-movies py-5 bg-light">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title mb-0 fade-in">Latest Movies</h2>
-        <a href="{% url 'movies:media_list' %}?type=Movie" class="btn btn-outline-primary slide-up">
-          <i class="bi bi-arrow-right me-1"></i>View All
         </a>
       </div>
-      <div class="row">
-        {% for movie in latest_movies %}
-          <div class="col-md-6 col-lg-4 col-xl-2 mb-4 slide-up" style="animation-delay: {{ forloop.counter0|add:'0.1'|mul:'0.05' }}s;">
-            <div class="card media-card h-100 shadow-sm position-relative overflow-hidden">
-              {% if movie.poster %}
-                <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}" />
-              {% else %}
-                <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
-              {% endif %}
-              <div class="card-body d-flex flex-column">
-                <h6 class="card-title text-truncate mb-2">{{ movie.title }}</h6>
-                <p class="card-text small text-muted mb-auto">{{ movie.release_year }}</p>
-                <div class="mt-2">
-                  <a href="{% url 'movies:media_detail' slug=movie.slug %}" class="btn btn-primary btn-sm w-100">
-                    <i class="bi bi-play-fill me-1"></i>Watch
-                  </a>
-                </div>
-              </div>
-              <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0" style="background: rgba(99, 102, 241, 0.9); transition: opacity 0.3s ease;">
-                <i class="bi bi-play-circle-fill text-white fs-1"></i>
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info fade-in">
-              <i class="bi bi-info-circle me-2"></i>No movies available at the moment.
-            </div>
-          </div>
-        {% endfor %}
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info">No genres available at the moment.</div>
       </div>
+      {% endfor %}
+      {% if genres|length > 12 %}
+      <div class="col-12 text-center mt-4">
+        <a href="{% url 'movies:genre_list' %}" class="btn btn-outline-primary">View All Genres</a>
+      </div>
+      {% endif %}
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Latest TV Series -->
-  <section class="latest-series py-5">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title mb-0">Latest TV Series</h2>
-        <a href="{% url 'movies:media_list' %}?type=Series" class="btn btn-outline-primary">View All</a>
+<!-- Call to Action -->
+<section class="cta py-5 text-white position-relative overflow-hidden"
+  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+  <div class="container position-relative" style="z-index: 2;">
+    <div class="row align-items-center">
+      <div class="col-lg-8 mb-4 mb-lg-0 slide-up">
+        <h2 class="fw-bold display-5 mb-3">Ready to watch? Join MovieHub today.</h2>
+        <p class="lead mb-0 fs-5">Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.</p>
       </div>
-      <div class="row">
-        {% for series in latest_series %}
-          <div class="col-md-6 col-lg-4 col-xl-2 mb-4">
-            <div class="card media-card h-100 shadow-sm">
-              {% if series.poster %}
-                <img src="{{ series.poster.url }}" class="card-img-top" alt="{{ series.title }}" />
-              {% else %}
-                <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
-              {% endif %}
-              <div class="card-body">
-                <h6 class="card-title text-truncate">{{ series.title }}</h6>
-                <p class="card-text small text-muted">
-                  {{ series.release_year }} • {{ series.series_details.total_seasons }} season{% if series.series_details.total_seasons != 1 %}s{% endif %}
-                </p>
-                <a href="{% url 'movies:media_detail' slug=series.slug %}" class="stretched-link"></a>
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info">No TV series available at the moment.</div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <!-- Latest Podcasts -->
-  <section class="latest-podcasts py-5 bg-light">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title mb-0">Latest Podcasts</h2>
-        <a href="{% url 'movies:media_list' %}?type=Podcast" class="btn btn-outline-primary">View All</a>
-      </div>
-      <div class="row">
-        {% for podcast in latest_podcasts %}
-          <div class="col-md-6 col-lg-4 col-xl-2 mb-4">
-            <div class="card media-card h-100 shadow-sm">
-              {% if podcast.poster %}
-                <img src="{{ podcast.poster.url }}" class="card-img-top" alt="{{ podcast.title }}" />
-              {% else %}
-                <img src="https://via.placeholder.com/350x200?text=No+Image" class="card-img-top" alt="No Image" />
-              {% endif %}
-              <div class="card-body">
-                <h6 class="card-title text-truncate">{{ podcast.title }}</h6>
-                <p class="card-text small text-muted">
-                  {{ podcast.release_year }} • {{ podcast.podcast_details.episode_count }} episode{% if podcast.podcast_details.episode_count != 1 %}s{% endif %}
-                </p>
-                <a href="{% url 'movies:media_detail' slug=podcast.slug %}" class="stretched-link"></a>
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info">No podcasts available at the moment.</div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <!-- Popular Content -->
-  <section class="popular-content py-5 bg-light">
-    <div class="container">
-      <h2 class="section-title">Popular Content</h2>
-      <div class="row">
-        {% for media in popular_media %}
-          <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-              <div class="row g-0">
-                <div class="col-4">
-                  {% if media.poster %}
-                    <img src="{{ media.poster.url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ media.title }}" />
-                  {% else %}
-                    <img src="https://via.placeholder.com/350x200?text=No+Image" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="No Image" />
-                  {% endif %}
-                </div>
-                <div class="col-8">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ media.title }}</h5>
-                    <p class="card-text small text-muted">{{ media.release_year }} • {{ media.media_type.name }}</p>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-eye-fill text-primary me-1"></i>
-                      <span>{{ media.views_count }} views</span>
-                    </div>
-                    <a href="{% url 'movies:media_detail' slug=media.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info">No popular content available at the moment.</div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <!-- Browse by Genre -->
-  <section class="genres py-5">
-    <div class="container">
-      <h2 class="section-title">Browse by Genre</h2>
-      <div class="row g-3">
-        {% for genre in genres|slice:':12' %}
-          <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-            <a href="{% url 'movies:genre_detail' slug=genre.slug %}" class="text-decoration-none">
-              <div class="card bg-dark text-white h-100">
-                <div class="card-body text-center py-4">
-                  <i class="fa fa-film fa-2x mb-3"></i>
-                  <h5 class="card-title mb-0">{{ genre.name }}</h5>
-                </div>
-              </div>
-            </a>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <div class="alert alert-info">No genres available at the moment.</div>
-          </div>
-        {% endfor %}
-        {% if genres|length > 12 %}
-          <div class="col-12 text-center mt-4">
-            <a href="{% url 'movies:genre_list' %}" class="btn btn-outline-primary">View All Genres</a>
-          </div>
+      <div class="col-lg-4 text-lg-end fade-in" style="animation-delay: 0.2s;">
+        {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:signup' %}" class="btn btn-light btn-lg fw-bold px-4 py-3">
+          <i class="bi bi-rocket-takeoff me-2"></i>Sign Up Now
+        </a>
+        {% else %}
+        <a href="{% url 'movies:media_list' %}" class="btn btn-light btn-lg fw-bold px-4 py-3">
+          <i class="bi bi-film me-2"></i>Browse Content
+        </a>
         {% endif %}
       </div>
     </div>
-  </section>
-
-  <!-- Call to Action -->
-  <section class="cta py-5 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="container position-relative" style="z-index: 2;">
-      <div class="row align-items-center">
-        <div class="col-lg-8 mb-4 mb-lg-0 slide-up">
-          <h2 class="fw-bold display-5 mb-3">Ready to watch? Join MovieHub today.</h2>
-          <p class="lead mb-0 fs-5">Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.</p>
-        </div>
-        <div class="col-lg-4 text-lg-end fade-in" style="animation-delay: 0.2s;">
-          {% if not user.is_authenticated %}
-            <a href="{% url 'accounts:signup' %}" class="btn btn-light btn-lg fw-bold px-4 py-3">
-              <i class="bi bi-rocket-takeoff me-2"></i>Sign Up Now
-            </a>
-          {% else %}
-            <a href="{% url 'movies:media_list' %}" class="btn btn-light btn-lg fw-bold px-4 py-3">
-              <i class="bi bi-film me-2"></i>Browse Content
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <!-- Background decoration -->
-    <div class="position-absolute top-0 end-0 opacity-10" style="z-index: 1;">
-      <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="300" cy="100" r="150" fill="white"/>
-        <circle cx="200" cy="200" r="100" fill="white"/>
-        <circle cx="350" cy="250" r="80" fill="white"/>
-      </svg>
-    </div>
-    <div class="position-absolute bottom-0 start-0 opacity-5" style="z-index: 1;">
-      <svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="50" y="50" width="200" height="100" rx="50" fill="white"/>
-        <circle cx="100" cy="100" r="30" fill="white"/>
-        <circle cx="200" cy="100" r="30" fill="white"/>
-      </svg>
-    </div>
-  </section>
+  </div>
+  <!-- Background decoration -->
+  <div class="position-absolute top-0 end-0 opacity-10" style="z-index: 1;">
+    <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="300" cy="100" r="150" fill="white" />
+      <circle cx="200" cy="200" r="100" fill="white" />
+      <circle cx="350" cy="250" r="80" fill="white" />
+    </svg>
+  </div>
+  <div class="position-absolute bottom-0 start-0 opacity-5" style="z-index: 1;">
+    <svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="50" y="50" width="200" height="100" rx="50" fill="white" />
+      <circle cx="100" cy="100" r="30" fill="white" />
+      <circle cx="200" cy="100" r="30" fill="white" />
+    </svg>
+  </div>
+</section>
 {% endblock %}
 
 {% block extra_js %}
-  <!-- Add any page-specific JavaScript here -->
+<!-- Add any page-specific JavaScript here -->
 {% endblock %}
